@@ -4,7 +4,6 @@ import com.radon.infrastructure.entity.ProductEntity;
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Builder
 public record Product(
@@ -12,7 +11,7 @@ public record Product(
         String name,
         String description,
         Category category,
-        Float weight,
+        BigDecimal weight,
         BigDecimal price
 ) {
 

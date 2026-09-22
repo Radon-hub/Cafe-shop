@@ -42,7 +42,7 @@ public class ProductEntity {
         @JoinColumn(name = "category_id", nullable = false)
         private CategoryEntity category;
 
-        @OneToOne(fetch = FetchType.LAZY, optional = false)
+        @OneToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "inventory_id")
         private InventoryEntity inventory;
 
@@ -50,7 +50,7 @@ public class ProductEntity {
         private BigDecimal price;
 
         @Column(nullable = false)
-        private Float weight;
+        private BigDecimal weight;
 
         @CreationTimestamp
         @Column(name = "created_at", nullable = false)
@@ -62,7 +62,15 @@ public class ProductEntity {
 
         public ProductEntity() {}
 
-        public ProductEntity(String name, String description, CategoryEntity category, BigDecimal price, Float weight) {
+        public ProductEntity(Long id,String name, String description, CategoryEntity category, BigDecimal price, BigDecimal weight) {
+                this.id = id;
+                this.name = name;
+                this.description = description;
+                this.category = category;
+                this.price = price;
+                this.weight = weight;
+        }
+        public ProductEntity(String name, String description, CategoryEntity category, BigDecimal price, BigDecimal weight) {
                 this.name = name;
                 this.description = description;
                 this.category = category;
