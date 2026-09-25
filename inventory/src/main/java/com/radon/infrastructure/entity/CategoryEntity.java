@@ -33,7 +33,7 @@ public class CategoryEntity {
             allocationSize = 1
     )
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String name;
 
     @CreationTimestamp
