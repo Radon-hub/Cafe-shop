@@ -26,11 +26,13 @@ public class InventoryEntity {
     @Column(nullable = false)
     private int count;
 
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false,unique = true)
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ProductEntity product;
 
-    private String wareHouse;
+    @ManyToOne(fetch =  FetchType.LAZY, cascade = CascadeType.ALL,optional = false)
+    @JoinColumn(name = "warehouse_id", nullable = false)
+    private WarehouseEntity wareHouse;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
@@ -42,7 +44,7 @@ public class InventoryEntity {
 
     public InventoryEntity() {}
 
-    public InventoryEntity(int count,String wareHouse) {
+    public InventoryEntity(int count,WarehouseEntity wareHouse) {
         this.count = count;
         this.wareHouse = wareHouse;
     }
