@@ -1,6 +1,7 @@
 package com.radon.infrastructure.entity;
 
 import com.radon.domain.Inventory;
+import com.radon.domain.Warehouse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,10 +50,10 @@ public class InventoryEntity {
         this.wareHouse = wareHouse;
     }
 
-    public static InventoryEntity of(Inventory inventory) {
+    public static InventoryEntity of(Inventory inventory, Warehouse warehouse) {
         return new InventoryEntity(
                 inventory.count(),
-                inventory.wareHouse()
+                WarehouseEntity.of(warehouse)
         );
     }
 

@@ -8,14 +8,14 @@ public record Inventory(
         Long id,
         Long productId,
         Integer count,
-        String wareHouse
+        Warehouse wareHouse
 ) {
 
     public static Inventory of(InventoryEntity inventoryEntity) {
         return Inventory.builder()
                 .id(inventoryEntity.getId())
                 .count(inventoryEntity.getCount())
-                .wareHouse(inventoryEntity.getWareHouse())
+                .wareHouse(Warehouse.of(inventoryEntity.getWareHouse()))
                 .productId(inventoryEntity.getProduct().getId())
                 .build();
     }

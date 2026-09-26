@@ -1,23 +1,31 @@
 package com.radon.presentation;
 
+import com.radon.application.port.in.AddProductUseCase;
 import com.radon.application.port.in.GetProductByIdUseCase;
 import com.radon.domain.Product;
 import com.radon.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/product")
 public class ProductController {
 
     private final GetProductByIdUseCase getProductByIdUseCase;
+    private final AddProductUseCase addProductUseCase;
 
-    public ProductController(GetProductByIdUseCase getProductByIdUseCase) {
+
+    public ProductController(GetProductByIdUseCase getProductByIdUseCase, AddProductUseCase addProductUseCase) {
         this.getProductByIdUseCase = getProductByIdUseCase;
+        this.addProductUseCase = addProductUseCase;
+    }
+
+    @PostMapping
+    public ResponseEntity<Response<Product>> addProduct(@RequestBody Product product) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new Response<>(addProductUseCase.addNewProduct())
+        );
     }
 
     @GetMapping("{id}")

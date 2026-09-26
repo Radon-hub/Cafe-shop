@@ -1,0 +1,15 @@
+package com.radon.exception.types;
+
+import com.radon.exception.ExceptionModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class WarehouseNotFoundException extends ExceptionModel {
+    public WarehouseNotFoundException(String name) {
+        super("Warehouse with name " + name + " not found!");
+    }
+    public WarehouseNotFoundException(Long id) {
+        super("Warehouse with id " + id + " not found!");
+    }
+}

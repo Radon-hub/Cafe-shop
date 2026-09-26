@@ -1,5 +1,6 @@
 package com.radon.infrastructure.entity;
 
+import com.radon.domain.Warehouse;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class WarehouseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String warehouse;
 
-    @OneToMany(mappedBy = "warehouse")
+    @OneToMany(mappedBy = "wareHouse")
     private List<InventoryEntity> inventory;
 
     @CreationTimestamp
@@ -36,5 +37,9 @@ public class WarehouseEntity {
 
     public WarehouseEntity(String warehouse) {
         this.warehouse = warehouse;
+    }
+
+    public static WarehouseEntity of(Warehouse warehouse) {
+        return new WarehouseEntity(warehouse.warehouse());
     }
 }

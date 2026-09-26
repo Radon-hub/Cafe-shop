@@ -11,6 +11,7 @@ public record Product(
         String name,
         String description,
         Category category,
+        Inventory inventory,
         BigDecimal weight,
         BigDecimal price
 ) {
@@ -20,6 +21,7 @@ public record Product(
                 .id(productEntity.getId())
                 .name(productEntity.getName())
                 .description(productEntity.getDescription())
+                .inventory(Inventory.of(productEntity.getInventory()))
                 .category(Category.of(productEntity.getCategory()))
                 .weight(productEntity.getWeight())
                 .price(productEntity.getPrice())

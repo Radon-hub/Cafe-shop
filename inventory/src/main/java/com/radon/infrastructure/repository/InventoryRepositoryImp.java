@@ -7,7 +7,9 @@ import com.radon.exception.types.InventoryExistsException;
 import com.radon.exception.types.InventoryNotFoundException;
 import com.radon.infrastructure.entity.InventoryEntity;
 import com.radon.infrastructure.jpa.InventoryJpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class InventoryRepositoryImp implements InventoryRepository {
 
     private final InventoryJpaRepository inventoryJpaRepository;
@@ -24,7 +26,7 @@ public class InventoryRepositoryImp implements InventoryRepository {
         }
 
         return Inventory.of(
-                inventoryJpaRepository.save(InventoryEntity.of(inventory))
+                inventoryJpaRepository.save(InventoryEntity.of(inventory, inventory.wareHouse()))
         );
     }
 
@@ -35,7 +37,7 @@ public class InventoryRepositoryImp implements InventoryRepository {
             throw new InventoryNotFoundException(inventory.productId());
         }
 
-        inventoryJpaRepository.delete(InventoryEntity.of(inventory));
+        inventoryJpaRepository.delete(InventoryEntity.of(inventory,inventory.wareHouse()));
 
         return OperationResult.SUCCESS;
     }
