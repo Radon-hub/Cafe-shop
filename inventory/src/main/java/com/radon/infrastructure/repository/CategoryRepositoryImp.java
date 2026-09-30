@@ -66,4 +66,11 @@ public class CategoryRepositoryImp implements CategoryRepository {
 
         return "Category has been deleted.";
     }
+
+    @Override
+    public CategoryEntity findCategoryById(Long id) {
+        return categoryJpaRepository.findById(id).orElseThrow(
+                () -> new CategoryNotFoundException("Category id " + id + " does not exist!")
+        );
+    }
 }

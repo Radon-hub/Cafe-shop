@@ -1,6 +1,7 @@
 package com.radon.infrastructure.entity;
 
 import com.radon.domain.Inventory;
+import com.radon.domain.Product;
 import com.radon.domain.Warehouse;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,11 +28,11 @@ public class InventoryEntity {
     @Column(nullable = false)
     private int count;
 
-    @JoinColumn(name = "product_id", nullable = false,unique = true)
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id", nullable = false,unique = true)
     private ProductEntity product;
 
-    @ManyToOne(fetch =  FetchType.LAZY, cascade = CascadeType.ALL,optional = false)
+    @ManyToOne(fetch =  FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "warehouse_id", nullable = false)
     private WarehouseEntity wareHouse;
 
@@ -45,13 +46,15 @@ public class InventoryEntity {
 
     public InventoryEntity() {}
 
-    public InventoryEntity(int count,WarehouseEntity wareHouse) {
+    public InventoryEntity(ProductEntity product,int count,WarehouseEntity wareHouse) {
+        this.product = product;
         this.count = count;
         this.wareHouse = wareHouse;
     }
 
-    public static InventoryEntity of(Inventory inventory, Warehouse warehouse) {
+    public static InventoryEntity of(ProductEntity productEntity, Inventory inventory, Warehouse warehouse) {
         return new InventoryEntity(
+                productEntity,
                 inventory.count(),
                 WarehouseEntity.of(warehouse)
         );

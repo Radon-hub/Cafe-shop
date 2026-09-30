@@ -5,5 +5,5 @@ import com.radon.domain.Product;
 
 public interface ProductRepository {
     Product getProductById(Long id);
-    Long addNewProduct(Product product);
+    Product addNewProduct(Product product);
 }
