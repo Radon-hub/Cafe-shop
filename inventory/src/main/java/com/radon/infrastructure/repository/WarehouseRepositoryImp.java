@@ -7,6 +7,7 @@ import com.radon.exception.types.WarehouseNotFoundException;
 import com.radon.infrastructure.entity.WarehouseEntity;
 import com.radon.infrastructure.jpa.WarehouseJpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -25,6 +26,19 @@ public class WarehouseRepositoryImp implements WarehouseRepository {
         WarehouseEntity warehouseEntity = warehouseJpaRepository.findByWarehouse(name).orElseThrow(() -> new WarehouseNotFoundException(name));
 
         return Warehouse.of(warehouseEntity);
+    }
+
+    @Override
+    public Warehouse updateWarehouse(Warehouse warehouse) {
+
+        WarehouseEntity existed = warehouseJpaRepository.findById(warehouse.id())
+                .orElseThrow(() -> new WarehouseNotFoundException(warehouse.id()));
+
+        existed.setWarehouse(warehouse.warehouse());
+
+        warehouseJpaRepository.save(existed);
+
+        return warehouse;
     }
 
     @Override

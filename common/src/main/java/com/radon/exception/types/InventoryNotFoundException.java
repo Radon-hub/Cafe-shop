@@ -9,4 +9,7 @@ public class InventoryNotFoundException extends ExceptionModel {
     public InventoryNotFoundException(Long productId) {
         super("Inventory not found for product id " + productId);
     }
+    public InventoryNotFoundException(Long id,Long productId) {
+        super("Inventory not found for id " + id + " and product id " + productId);
+    }
 }
