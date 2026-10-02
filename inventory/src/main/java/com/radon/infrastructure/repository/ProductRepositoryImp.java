@@ -8,6 +8,7 @@ import com.radon.domain.Category;
 import com.radon.domain.Inventory;
 import com.radon.domain.Product;
 import com.radon.domain.Warehouse;
+import com.radon.exception.types.CategoryNotFoundException;
 import com.radon.exception.types.ProductExistsException;
 import com.radon.exception.types.ProductNotFoundException;
 import com.radon.infrastructure.entity.CategoryEntity;
@@ -57,6 +58,10 @@ public class ProductRepositoryImp implements ProductRepository {
 
         CategoryEntity category = categoryRepository.findCategoryById(product.category().id());
 
+        if(category != null){
+            throw new CategoryNotFoundException(product.id());
+        }
+
         ProductEntity productEntity = productJpaRepository.save(new ProductEntity(
                 product.name(),
                 product.description(),
@@ -80,6 +85,47 @@ public class ProductRepositoryImp implements ProductRepository {
                         .id(inventory.getId())
                         .count(inventory.getCount())
                         .wareHouse(Warehouse.builder().id(inventory.getWareHouse().getId()).warehouse(inventory.getWareHouse().getWarehouse()).build())
+                        .build())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public Product updateProduct(Product product) {
+
+        ProductEntity productEntity = productJpaRepository.findById(product.id()).orElseThrow(
+                () -> new ProductNotFoundException(product.id().toString())
+        );
+
+        productEntity.updateName(product.name());
+        productEntity.updateDescription(product.description());
+        productEntity.updatePrice(product.price());
+        productEntity.updateWeight(product.weight());
+
+        if(product.category() != null && product.category().id() != null && product.category().id() > 0){
+
+            CategoryEntity category = categoryRepository.findCategoryById(product.category().id());
+
+            if(category == null){
+                throw new CategoryNotFoundException(product.id());
+            }
+
+            productEntity.setCategory(category);
+
+        }
+
+        return Product.builder()
+                .id(productEntity.getId())
+                .name(productEntity.getName())
+                .description(productEntity.getDescription())
+                .price(productEntity.getPrice())
+                .weight(productEntity.getWeight())
+                .inventory(Inventory.builder().id(productEntity.getInventory().getId()).productId(product.id()).count(productEntity.getInventory().getCount())
+                        .wareHouse(Warehouse.builder().warehouse(productEntity.getInventory().getWareHouse().getWarehouse()).id(productEntity.getInventory().getWareHouse().getId()).build())
+                        .build())
+                .category(Category.builder()
+                        .id(productEntity.getCategory().getId())
+                        .name(productEntity.getCategory().getName())
                         .build())
                 .build();
     }

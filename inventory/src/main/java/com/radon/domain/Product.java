@@ -2,6 +2,7 @@ package com.radon.domain;
 
 import com.radon.infrastructure.entity.ProductEntity;
 import com.radon.presentation.dto.ProductAddRequest;
+import com.radon.presentation.dto.ProductUpdateRequest;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -38,5 +39,23 @@ public record Product(
                 .price(req.price())
                 .build();
     }
+    public static Product of(ProductUpdateRequest req) {
+        return Product.builder()
+                .name(req.name())
+                .description(req.description())
+                .category(Category.builder().id(req.categoryId()).build())
+                .weight(req.weight())
+                .price(req.price())
+                .build();
+    }
 
+    public ProductBuilder toBuilder(){
+        return Product.builder()
+                .name(this.name)
+                .description(this.description)
+                .inventory(this.inventory)
+                .category(this.category)
+                .weight(this.weight)
+                .price(this.price);
+    }
 }

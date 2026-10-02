@@ -87,4 +87,27 @@ public class ProductEntity {
                         product.weight()
                 );
         }
+
+
+        public void updateName(String newName) {
+                if((newName != null && !newName.isEmpty()) && !newName.equals(name)){
+                        setName(newName);
+                }
+        }
+        public void updateDescription(String newDescription) {
+                if((newDescription != null && !newDescription.isEmpty()) && !newDescription.equals(description)){
+                        setDescription(newDescription);
+                }
+        }
+        public void updatePrice(BigDecimal newPrice) {
+                if((newPrice != null) && !newPrice.equals(price)){
+                        setPrice(newPrice);
+                }
+        }
+        public void updateWeight(BigDecimal newWeight) {
+                if((newWeight != null) && !newWeight.equals(weight)){
+                        setWeight(newWeight);
+                }
+        }
+
 }

@@ -11,4 +11,9 @@ public class CategoryNotFoundException extends ExceptionModel {
                 "Category with name " + name + " not found!"
         );
     }
+    public CategoryNotFoundException(Long id) {
+        super(
+                "Category with id " + id + " not found!"
+        );
+    }
 }
