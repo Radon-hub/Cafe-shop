@@ -3,7 +3,6 @@ package com.radon.infrastructure.repository;
 import com.radon.application.port.out.CategoryRepository;
 import com.radon.application.port.out.InventoryRepository;
 import com.radon.application.port.out.ProductRepository;
-import com.radon.application.port.out.WarehouseRepository;
 import com.radon.domain.Category;
 import com.radon.domain.Inventory;
 import com.radon.domain.Product;
@@ -14,8 +13,12 @@ import com.radon.exception.types.ProductNotFoundException;
 import com.radon.infrastructure.entity.CategoryEntity;
 import com.radon.infrastructure.entity.InventoryEntity;
 import com.radon.infrastructure.entity.ProductEntity;
-import com.radon.infrastructure.entity.WarehouseEntity;
 import com.radon.infrastructure.jpa.ProductJpaRepository;
+import com.radon.infrastructure.repository.specifications.ProductSpecifications;
+import com.radon.presentation.dto.ProductSearchFilterRequest;
+import lombok.val;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,6 +131,40 @@ public class ProductRepositoryImp implements ProductRepository {
                         .name(productEntity.getCategory().getName())
                         .build())
                 .build();
+    }
+
+    @Override
+    public Page<Product> searchProduct(ProductSearchFilterRequest filter, int page, int size) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("name").ascending()
+        );
+
+        Specification<ProductEntity> specification = ProductSpecifications.productSearchFilter(filter);
+
+        val pagedContent = productJpaRepository.findAll(specification, pageable).map(item ->
+                Product.builder()
+                        .id(item.getId())
+                        .name(item.getName())
+                        .description(item.getDescription())
+                        .price(item.getPrice())
+                        .weight(item.getWeight())
+                        .category(Category.of(item.getCategory()))
+                        .inventory(Inventory.builder()
+                                .id(item.getInventory().getId())
+                                .count(item.getInventory().getCount())
+                                .wareHouse(Warehouse.builder()
+                                        .id(item.getInventory().getWareHouse().getId())
+                                        .warehouse(item.getInventory().getWareHouse().getWarehouse())
+                                        .build())
+                                .build()
+                        )
+                        .build()
+        );
+
+        return pagedContent;
     }
 
 
