@@ -36,4 +36,9 @@ public class AuthorizationRepositoryImp implements AuthorizationRepository {
 
         return Role.of(roleJpaRepository.save(new RoleEntity(role.role(),authorityEntities)));
     }
+
+    @Override
+    public Boolean checkRolesExists(Role role) {
+        return roleJpaRepository.existsByRole(role.role());
+    }
 }

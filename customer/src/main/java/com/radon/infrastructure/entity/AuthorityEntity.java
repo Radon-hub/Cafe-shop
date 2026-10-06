@@ -15,7 +15,7 @@ import java.time.Instant;
 @Table(name = "authorities")
 @Getter
 @Setter
-public class AuthorityEntity implements GrantedAuthority {
+public class AuthorityEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,11 +23,6 @@ public class AuthorityEntity implements GrantedAuthority {
 
     @Column(nullable = false, unique = true)
     private String authority;
-
-    @Override
-    public @Nullable String getAuthority() {
-        return authority;
-    }
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

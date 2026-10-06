@@ -6,4 +6,5 @@ import com.radon.domain.Role;
 public interface AuthorizationRepository {
     Authority createAuthority(Authority authority);
     Role createRole(Role role);
+    Boolean checkRolesExists(Role role);
 }

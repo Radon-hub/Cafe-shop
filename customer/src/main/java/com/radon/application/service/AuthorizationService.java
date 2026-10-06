@@ -1,5 +1,6 @@
 package com.radon.application.service;
 
+import com.radon.application.port.in.CheckRolesExistsUseCase;
 import com.radon.application.port.in.CreateAuthorityUseCase;
 import com.radon.application.port.in.CreateRoleUseCase;
 import com.radon.application.port.out.AuthorizationRepository;
@@ -8,7 +9,7 @@ import com.radon.domain.Role;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthorizationService implements CreateAuthorityUseCase, CreateRoleUseCase {
+public class AuthorizationService implements CreateAuthorityUseCase, CreateRoleUseCase, CheckRolesExistsUseCase {
 
     private final AuthorizationRepository authorizationRepository;
 
@@ -24,5 +25,10 @@ public class AuthorizationService implements CreateAuthorityUseCase, CreateRoleU
     @Override
     public Role createRole(Role role) {
         return authorizationRepository.createRole(role);
+    }
+
+    @Override
+    public Boolean checkRolesExists(Role role) {
+        return authorizationRepository.checkRolesExists(role);
     }
 }
