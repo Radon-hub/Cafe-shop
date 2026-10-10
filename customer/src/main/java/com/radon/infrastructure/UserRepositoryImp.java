@@ -1,6 +1,8 @@
 package com.radon.infrastructure;
 
 import com.radon.application.port.out.UserRepository;
+import com.radon.application.service.JwtUtil;
+import com.radon.domain.JwtTokens;
 import com.radon.domain.User;
 import com.radon.exception.types.RoleNotFoundException;
 import com.radon.exception.types.UserExistsException;
@@ -9,6 +11,11 @@ import com.radon.infrastructure.entity.RoleEntity;
 import com.radon.infrastructure.entity.UserEntity;
 import com.radon.infrastructure.jpa.RoleJpaRepository;
 import com.radon.infrastructure.jpa.UserJpaRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
@@ -20,10 +27,16 @@ public class UserRepositoryImp implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserRepositoryImp(UserJpaRepository userJpaRepository, RoleJpaRepository roleJpaRepository) {
+    public UserRepositoryImp(UserJpaRepository userJpaRepository, RoleJpaRepository roleJpaRepository, AuthenticationManager authenticationManager, JwtUtil jwtUtil,PasswordEncoder passwordEncoder) {
         this.userJpaRepository = userJpaRepository;
         this.roleJpaRepository = roleJpaRepository;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -47,7 +60,7 @@ public class UserRepositoryImp implements UserRepository {
                                 user.firstName(),
                                 user.lastName(),
                                 user.userName(),
-                                user.password(),
+                                passwordEncoder.encode(user.password()),
                                 roles
                         )
                 )
@@ -55,7 +68,18 @@ public class UserRepositoryImp implements UserRepository {
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return User.of(userJpaRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username)));
+    public JwtTokens loginUser(String username, String password) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+        );
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        String accessToken = jwtUtil.generateAccessToken(userDetails);
+        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+        return new JwtTokens(accessToken, refreshToken);
     }
+
 }

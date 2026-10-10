@@ -10,7 +10,6 @@
         <module name="common" />
         <module name="inventory" />
         <module name="order" />
-        <module name="customer" />
       </profile>
       <profile name="Annotation profile for CafeShop" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -20,6 +19,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
         <module name="application" />
+        <module name="customer" />
       </profile>
     </annotationProcessing>
   </component>

@@ -42,17 +42,17 @@ public record User(
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles().stream().map(Role::authorities).flatMap(Collection::stream).collect(Collectors.toList());
+        return this.roles.stream().map(Role::authorities).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override
     public @Nullable String getPassword() {
-        return password();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return userName();
+        return this.userName;
     }
 
     @Override
@@ -76,6 +76,10 @@ public record User(
                 .lastName(request.lastName())
                 .password(request.password())
                 .userName(request.userName())
+                .roles(request.roles().stream().map(item -> Role.builder()
+                        .role(item.name())
+                        .build()
+                ).collect(Collectors.toSet()))
                 .build();
     }
 }

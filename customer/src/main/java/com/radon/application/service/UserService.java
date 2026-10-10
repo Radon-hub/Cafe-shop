@@ -1,15 +1,14 @@
 package com.radon.application.service;
 
+import com.radon.application.port.in.LoginUserUseCase;
 import com.radon.application.port.in.RegisterUserUseCase;
 import com.radon.application.port.out.UserRepository;
+import com.radon.domain.JwtTokens;
 import com.radon.domain.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserDetailsService,RegisterUserUseCase {
+public class UserService implements RegisterUserUseCase, LoginUserUseCase {
 
     private final UserRepository userRepository;
 
@@ -23,8 +22,8 @@ public class UserService implements UserDetailsService,RegisterUserUseCase {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.getUserByUsername(username);
+    public JwtTokens loginUser(String username, String password) {
+        return userRepository.loginUser(username,password);
     }
 
 }
