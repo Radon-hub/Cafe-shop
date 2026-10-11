@@ -61,10 +61,6 @@ public class ProductRepositoryImp implements ProductRepository {
 
         CategoryEntity category = categoryRepository.findCategoryById(product.category().id());
 
-        if(category != null){
-            throw new CategoryNotFoundException(product.id());
-        }
-
         ProductEntity productEntity = productJpaRepository.save(new ProductEntity(
                 product.name(),
                 product.description(),

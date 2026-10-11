@@ -25,11 +25,6 @@ public class AuthController {
         this.loginUserUseCase = loginUserUseCase;
     }
 
-    @GetMapping
-    public String resooo(){
-        return "Hello World!";
-    }
-
     @PostMapping("login")
     public ResponseEntity<Response<UserLoginResponse>> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         JwtTokens tokens = loginUserUseCase.loginUser(userLoginRequest.userName(), userLoginRequest.password());

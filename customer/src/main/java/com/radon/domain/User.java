@@ -6,7 +6,10 @@ import com.radon.presentation.dto.UserRegisterRequest;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
@@ -42,7 +45,16 @@ public record User(
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(Role::authorities).flatMap(Collection::stream).collect(Collectors.toList());
+//        return this.roles.stream().map(Role::authorities).flatMap(Collection::stream).collect(Collectors.toList());
+        var listOfAuthorities = this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority(
+                        "ROLE_" + role.role()
+                ))
+                .collect(Collectors.toSet());
+        listOfAuthorities.addAll(
+                this.roles.stream().map(Role::authorities).flatMap(Collection::stream).map(item -> new SimpleGrantedAuthority(item.authority())).toList()
+        );
+        return listOfAuthorities;
     }
 
     @Override
@@ -63,6 +75,7 @@ public record User(
     public static User of(UserEntity userEntity) {
         return User.builder()
                 .id(userEntity.getId())
+                .userName(userEntity.getUsername())
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
                 .password(userEntity.getPassword())
@@ -72,10 +85,10 @@ public record User(
 
     public static User of(UserRegisterRequest request) {
         return User.builder()
+                .userName(request.userName())
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .password(request.password())
-                .userName(request.userName())
                 .roles(request.roles().stream().map(item -> Role.builder()
                         .role(item.name())
                         .build()

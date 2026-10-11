@@ -17,3 +17,5 @@ spring:
 security:
   jwt:
     secret: Ai0c5dgskjaoijwjjsbvev56#5kj3222@!!01c
+    access-token-validity-sec: 600
+    refresh-token-validity-sec: 3600

@@ -15,28 +15,32 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    @Value("${security.jwt.access-token-validity-sec:600}")
+    private int accessTokenValiditySeconds;
+    @Value("${security.jwt.refresh-token-validity-sec:3600}")
+    private int refreshTokenValiditySeconds;
+
     private final SecretKey secretKey;
 
     public JwtUtil(@Value("${security.jwt.secret}") String secretKey){
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-
     public String generateAccessToken(UserDetails userDetails){
-        return generateToken(userDetails,TokenType.ACCESS);
+        return generateToken(userDetails,TokenType.ACCESS,accessTokenValiditySeconds);
     }
     public String generateRefreshToken(UserDetails userDetails){
-        return generateToken(userDetails,TokenType.REFRESH);
+        return generateToken(userDetails,TokenType.REFRESH,refreshTokenValiditySeconds);
     }
 
-    private String generateToken(UserDetails userDetails,TokenType tokenType){
+    private String generateToken(UserDetails userDetails,TokenType tokenType,int expiration){
         Instant now = Instant.now();
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("type", tokenType.name())
                 .claim("authorities", userDetails.getAuthorities())
                 .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusSeconds(tokenType.getExpiration())))
+                .expiration(Date.from(now.plusSeconds(expiration)))
                 .signWith(secretKey)
                 .compact();
     }

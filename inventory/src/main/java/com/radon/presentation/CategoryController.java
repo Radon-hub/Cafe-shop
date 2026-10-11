@@ -11,6 +11,7 @@ import com.radon.presentation.dto.CategoryResponse;
 import com.radon.presentation.dto.CategoryUpdateRequest;
 import com.radon.response.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<CategoryResponse>> addNewCategory(@RequestBody CategoryAddRequest categoryAddRequest) {
         return ResponseEntity.ok(
                 new Response<>(
@@ -52,6 +54,7 @@ public class CategoryController {
     }
 
     @PutMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<CategoryResponse>> updateCategory(@RequestBody CategoryUpdateRequest categoryUpdateRequest) {
         return ResponseEntity.ok(
                 new Response<>(
@@ -63,6 +66,7 @@ public class CategoryController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<String>> deleteCategory(@RequestBody CategoryDeleteRequest categoryDeleteRequest) {
         return ResponseEntity.ok(
                 new Response<>(

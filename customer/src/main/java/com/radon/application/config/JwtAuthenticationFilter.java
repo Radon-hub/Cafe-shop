@@ -1,9 +1,7 @@
 package com.radon.application.config;
 
-import com.radon.application.port.out.UserRepository;
 import com.radon.application.service.AuthUserDetailsService;
 import com.radon.application.service.JwtUtil;
-import com.radon.application.service.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -64,6 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    System.out.println(authentication.getAuthorities());
 
                 }
             }
