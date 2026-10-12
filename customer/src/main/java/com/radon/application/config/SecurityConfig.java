@@ -1,6 +1,8 @@
 package com.radon.application.config;
 
 import com.radon.application.service.AuthUserDetailsService;
+import com.radon.exception.AuthAccessDeniedHandler;
+import com.radon.exception.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,7 +49,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http,AuthenticationProvider provider) throws Exception {
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            AuthenticationProvider provider,
+            CustomAuthenticationEntryPoint entryPoint,
+            AuthAccessDeniedHandler accessDeniedHandler
+    ) throws Exception {
         return http.
                 csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -56,9 +63,15 @@ public class SecurityConfig {
                         )
                 )
                 .authenticationProvider(provider)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/v1/product/**").authenticated()
+                        .requestMatchers("/api/v1/product/search", "/api/v1/product/search/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

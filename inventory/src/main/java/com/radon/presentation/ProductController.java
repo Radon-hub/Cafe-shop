@@ -14,6 +14,7 @@ import com.radon.response.Response;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -69,6 +70,7 @@ public class ProductController {
     }
 
     @GetMapping("search")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponse<List<ProductResponse>>> searchProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) List<String> categories,

@@ -50,9 +50,9 @@ public class WarehouseRepositoryImp implements WarehouseRepository {
             throw new WarehouseExistsException(warehouse.warehouse());
         }
 
-        warehouseJpaRepository.save(WarehouseEntity.of(warehouse));
+        WarehouseEntity save = warehouseJpaRepository.save(WarehouseEntity.of(warehouse));
 
-        return warehouse;
+        return Warehouse.builder().id(save.getId()).warehouse(save.getWarehouse()).build();
     }
 
     @Override
