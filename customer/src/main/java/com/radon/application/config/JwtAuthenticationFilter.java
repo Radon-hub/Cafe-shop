@@ -2,6 +2,7 @@ package com.radon.application.config;
 
 import com.radon.application.service.AuthUserDetailsService;
 import com.radon.application.service.JwtUtil;
+import com.radon.domain.TokenType;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -51,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 UserDetails userDetails = authUserDetailsService.loadUserByUsername(userName);
 
-                if(jwtUtil.isTokenValid(token,userDetails)){
+                if(jwtUtil.isTokenValid(token,userDetails) && (jwtUtil.getTokenType(token) == TokenType.ACCESS)){
 
                     var authentication = new UsernamePasswordAuthenticationToken(
                             userDetails,

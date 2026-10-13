@@ -39,29 +39,4 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Response<Void>> handleUnexpectedException(
-            Exception exception,
-            HttpServletRequest request
-    ) {
-        // Log the actual exception for debugging.
-        // Never expose stack traces or internal details to clients.
-        // log.error("Unexpected error at {}", request.getRequestURI(), exception);
-
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-        return ResponseEntity.status(status).body(
-                new Response<>(
-                        null,
-                        new ErrorResponse(
-                                status.value(),
-                                status.name(),
-                                "An unexpected error occurred",
-                                request.getRequestURI()
-                        )
-                )
-        );
-    }
-
 }

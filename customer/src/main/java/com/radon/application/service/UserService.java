@@ -1,6 +1,7 @@
 package com.radon.application.service;
 
 import com.radon.application.port.in.LoginUserUseCase;
+import com.radon.application.port.in.RefreshTokenUseCase;
 import com.radon.application.port.in.RegisterUserUseCase;
 import com.radon.application.port.out.UserRepository;
 import com.radon.domain.JwtTokens;
@@ -8,7 +9,7 @@ import com.radon.domain.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements RegisterUserUseCase, LoginUserUseCase {
+public class UserService implements RegisterUserUseCase, LoginUserUseCase, RefreshTokenUseCase {
 
     private final UserRepository userRepository;
 
@@ -26,4 +27,8 @@ public class UserService implements RegisterUserUseCase, LoginUserUseCase {
         return userRepository.loginUser(username,password);
     }
 
+    @Override
+    public JwtTokens refreshToken(String refreshToken) {
+        return userRepository.refreshToken(refreshToken);
+    }
 }

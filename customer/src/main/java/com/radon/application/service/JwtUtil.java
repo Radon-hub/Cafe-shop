@@ -53,6 +53,11 @@ public class JwtUtil {
                 .getPayload();
     }
 
+    public TokenType getTokenType(String token){
+        Claims claims = parseClaims(token);
+        return TokenType.valueOf(claims.get("type").toString());
+    }
+
     public boolean isTokenValid(String token, UserDetails user){
         Claims claims = parseClaims(token);
         return claims.getSubject().equals(user.getUsername()) && !claims.getExpiration().before(new Date());

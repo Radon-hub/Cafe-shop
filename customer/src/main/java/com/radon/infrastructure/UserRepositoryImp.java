@@ -3,10 +3,9 @@ package com.radon.infrastructure;
 import com.radon.application.port.out.UserRepository;
 import com.radon.application.service.JwtUtil;
 import com.radon.domain.JwtTokens;
+import com.radon.domain.TokenType;
 import com.radon.domain.User;
-import com.radon.exception.types.RoleNotFoundException;
-import com.radon.exception.types.UserExistsException;
-import com.radon.exception.types.UserNotFoundException;
+import com.radon.exception.types.*;
 import com.radon.infrastructure.entity.RoleEntity;
 import com.radon.infrastructure.entity.UserEntity;
 import com.radon.infrastructure.jpa.RoleJpaRepository;
@@ -80,6 +79,30 @@ public class UserRepositoryImp implements UserRepository {
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
         return new JwtTokens(accessToken, refreshToken);
+    }
+
+    @Override
+    public JwtTokens refreshToken(String refreshToken) {
+
+        String username = jwtUtil.extractUsername(refreshToken);
+
+        TokenType tokenType = jwtUtil.getTokenType(refreshToken);
+
+        if(tokenType != TokenType.REFRESH){
+            throw new InvalidTokenTypeException("This token did not provided for refreshing!");
+        }
+
+        UserDetails userDetails = User.of(userJpaRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username)));
+
+        if(!jwtUtil.isTokenValid(refreshToken,userDetails)) {
+            throw new InvalidTokenException();
+        }
+
+        String accessToken = jwtUtil.generateAccessToken(userDetails);
+        String newRefreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+        return new JwtTokens(accessToken, newRefreshToken);
+
     }
 
 }

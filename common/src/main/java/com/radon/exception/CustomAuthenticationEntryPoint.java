@@ -1,5 +1,7 @@
 package com.radon.exception;
 
+import com.radon.response.ErrorResponse;
+import com.radon.response.Response;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,8 +11,6 @@ import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.HashMap;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -26,14 +26,18 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        HashMap<String,Object> body = new HashMap<>();
+        mapper.writeValue(
+                response.getOutputStream(),
+                new Response<>(
+                        null,
+                        new ErrorResponse(
+                                HttpServletResponse.SC_UNAUTHORIZED,
+                                "Unauthorized",
+                                "Authentication required (Your user may not be authenticated or Token expired!)",
+                                request.getRequestURI()
+                        )
+                )
+        );
 
-        body.put("timestamp", Instant.now().toString());
-        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
-        body.put("message", "Authentication required (Your user may not be authenticated or Token expired!)");
-        body.put("path", request.getServletPath());
-
-        mapper.writeValue(response.getOutputStream(), body);
     }
 }

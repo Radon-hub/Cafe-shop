@@ -19,7 +19,6 @@ public class AuthUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         var user = userJpaRepository.findByUsername(username);
         return User.of(user.orElseThrow(() -> new UserNotFoundException(username)));
     }

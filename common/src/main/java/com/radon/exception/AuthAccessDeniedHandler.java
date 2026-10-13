@@ -15,10 +15,10 @@ import java.io.IOException;
 @Component
 public class AuthAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper mapper;
 
-    public AuthAccessDeniedHandler(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public AuthAccessDeniedHandler(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class AuthAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json");
 
-        objectMapper.writeValue(
+        mapper.writeValue(
                 response.getOutputStream(),
                 new Response<>(
                         null,
