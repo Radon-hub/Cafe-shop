@@ -44,7 +44,6 @@ public record User(
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return this.roles.stream().map(Role::authorities).flatMap(Collection::stream).collect(Collectors.toList());
         var listOfAuthorities = this.roles.stream()
                 .map(role -> new SimpleGrantedAuthority(
                         "ROLE_" + role.role()
