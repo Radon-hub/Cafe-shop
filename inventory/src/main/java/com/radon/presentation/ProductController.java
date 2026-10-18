@@ -37,6 +37,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<ProductResponse>> addProduct(@RequestBody ProductAddRequest product) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response<>(
@@ -55,6 +56,7 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<ProductResponse>> updateProduct(@PathVariable long id, @RequestBody ProductUpdateRequest product) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response<>(

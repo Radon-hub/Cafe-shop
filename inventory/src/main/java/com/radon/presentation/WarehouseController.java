@@ -8,6 +8,7 @@ import com.radon.presentation.dto.WarehouseResponse;
 import com.radon.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +24,7 @@ public class WarehouseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<WarehouseResponse>> addNewWarehouse(@RequestBody WarehouseRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response<>(
@@ -33,6 +35,7 @@ public class WarehouseController {
 
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<WarehouseResponse>> updateWarehouse(@PathVariable("id") Long id,@RequestBody WarehouseRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new Response<>(
