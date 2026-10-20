@@ -8,7 +8,7 @@ import java.util.UUID;
 @Builder
 public record OrderItem(
     UUID id,
-    Long productId,
+    Product product,
     int quantity,
     BigDecimal price
 ) {

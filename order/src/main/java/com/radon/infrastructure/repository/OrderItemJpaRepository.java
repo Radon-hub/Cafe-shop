@@ -1,5 +1,6 @@
-package com.radon.infrastructure;
+package com.radon.infrastructure.repository;
 
+import com.radon.infrastructure.entity.OrderItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

@@ -11,7 +11,7 @@ import java.util.UUID;
 public record Order(
         UUID id,
         String orderNumber,
-        UUID userId,
+        User user,
         OrderStatus orderStatus,
         BigDecimal totalPrice,
         String paymentId,

@@ -1,7 +1,6 @@
-package com.radon.infrastructure;
+package com.radon.infrastructure.entity;
 
 import com.radon.domain.OrderStatus;
-import com.radon.infrastructure.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

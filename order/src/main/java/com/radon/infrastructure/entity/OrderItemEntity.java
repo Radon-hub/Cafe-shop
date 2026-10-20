@@ -1,6 +1,5 @@
-package com.radon.infrastructure;
+package com.radon.infrastructure.entity;
 
-import com.radon.infrastructure.entity.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
