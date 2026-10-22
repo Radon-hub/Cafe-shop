@@ -1,10 +1,10 @@
 com\radon\exception\types\IllegalStateException.class
 com\radon\exception\types\CategoryExistsException.class
-com\radon\Main.class
 com\radon\exception\types\InventoryExistsException.class
 com\radon\response\ErrorResponse.class
 com\radon\exception\types\IllegalArgumentException.class
 com\radon\exception\types\UserExistsException.class
+com\radon\exception\types\UnAuthorizedException.class
 com\radon\exception\GlobalExceptionHandler.class
 com\radon\OperationResult.class
 com\radon\exception\types\ProductExistsException.class

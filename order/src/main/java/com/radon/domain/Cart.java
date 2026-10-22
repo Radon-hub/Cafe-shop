@@ -1,6 +1,5 @@
 package com.radon.domain;
 
-import com.radon.infrastructure.entity.UserEntity;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -15,6 +14,5 @@ public record Cart(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-    public static User of(UserEntity userEntity){
-    }
+
 }

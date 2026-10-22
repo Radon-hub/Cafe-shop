@@ -7,5 +7,5 @@ import com.radon.infrastructure.entity.UserEntity;
 
 public interface CartRepository {
     OperationResult addToCart(Product product);
-    Cart createCart(UserEntity user);
+    OperationResult removeFromCart(Product product);
 }

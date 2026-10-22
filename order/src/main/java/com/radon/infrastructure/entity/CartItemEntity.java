@@ -40,4 +40,9 @@ public class CartItemEntity {
     @Column(name = "updated_at",nullable = false)
     private Instant updatedAt;
 
+    public CartItemEntity(CartEntity cart, ProductEntity product, int quantity) {
+        this.cart = cart;
+        this.product = product;
+        this.quantity = quantity;
+    }
 }
