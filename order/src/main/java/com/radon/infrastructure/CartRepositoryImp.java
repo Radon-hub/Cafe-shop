@@ -19,7 +19,6 @@ import com.radon.infrastructure.jpa.UserJpaRepository;
 import com.radon.infrastructure.repository.CartItemJpaRepository;
 import com.radon.infrastructure.repository.CartJpaRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -49,28 +48,29 @@ public class CartRepositoryImp implements CartRepository {
 
         User user = getCurrentUserUseCase.getCurrentUser();
 
-        UserEntity userEntity = userJpaRepository.findByUsername(user.getUsername()).orElseThrow(() -> new UserNotFoundException(user.getUsername()));
+        CartEntity cartExists = cartJpaRepository.findByUser_Id(user.id()).orElseThrow(CartNotFoundException::new);
 
-        Optional<CartEntity> cartExists = cartJpaRepository.findByUser_Id(user.id());
+        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(),cartExists.getId());
 
-        if(cartExists.isEmpty()){
-            CartEntity cartEntity = cartJpaRepository.save(new CartEntity(userEntity));
-            cartItemJpaRepository.save(new CartItemEntity(cartEntity,productEntity,1));
+        if(existingItem.isPresent()){
+            CartItemEntity cartItemEntity = existingItem.get();
+            cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
         }else{
-
-            Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(),cartExists.get().getId());
-
-            if(existingItem.isPresent()){
-                CartItemEntity cartItemEntity = existingItem.get();
-                cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
-            }else{
-                cartItemJpaRepository.save(new CartItemEntity(cartExists.get(),productEntity,1));
-            }
-
+            cartItemJpaRepository.save(new CartItemEntity(cartExists,productEntity,1));
         }
 
         return OperationResult.SUCCESS;
 
+    }
+
+    @Override
+    public Cart getCart() {
+
+        User user = getCurrentUserUseCase.getCurrentUser();
+
+        CartEntity cartEntity = cartJpaRepository.findByUser_Id(user.id()).orElseThrow(() -> new UserNotFoundException(user.getUsername()));
+
+        return Cart.of(cartEntity);
     }
 
     @Override
@@ -90,6 +90,15 @@ public class CartRepositoryImp implements CartRepository {
         }else{
             cartItemJpaRepository.delete(existingItem);
         }
+
+        return OperationResult.SUCCESS;
+
+    }
+
+    @Override
+    public OperationResult createCart(UserEntity userEntity) {
+
+        cartJpaRepository.save(new CartEntity(userEntity));
 
         return OperationResult.SUCCESS;
 
