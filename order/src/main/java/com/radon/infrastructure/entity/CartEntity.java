@@ -25,9 +25,8 @@ public class CartEntity {
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItemEntity> items = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "customer_id",nullable = false,updatable = false)
+    private UUID customerId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
@@ -37,8 +36,8 @@ public class CartEntity {
     @Column(name = "updated_at",nullable = false)
     private Instant updatedAt;
 
-    public CartEntity(UserEntity user) {
-        this.user = user;
+    public CartEntity(UUID customerId) {
+        this.customerId = customerId;
     }
 
 }

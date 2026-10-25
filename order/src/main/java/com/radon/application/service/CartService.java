@@ -12,6 +12,8 @@ import com.radon.domain.User;
 import com.radon.infrastructure.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, GetCartUseCase, CreateCartUseCase {
 
@@ -37,7 +39,7 @@ public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, Get
     }
 
     @Override
-    public OperationResult createCart(UserEntity userEntity) {
-        return cartRepository.createCart(userEntity);
+    public OperationResult createCart(UUID customerId) {
+        return cartRepository.createCart(customerId);
     }
 }

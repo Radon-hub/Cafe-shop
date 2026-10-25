@@ -5,6 +5,8 @@ import com.radon.domain.Cart;
 import com.radon.domain.Product;
 import com.radon.infrastructure.entity.UserEntity;
 
+import java.util.UUID;
+
 public interface CartRepository {
     OperationResult addToCart(Product product);
 
@@ -12,5 +14,5 @@ public interface CartRepository {
 
     OperationResult removeFromCart(Product product);
 
-    OperationResult createCart(UserEntity userEntity);
+    OperationResult createCart(UUID customerId);
 }

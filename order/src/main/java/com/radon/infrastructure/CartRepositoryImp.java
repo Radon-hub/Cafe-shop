@@ -22,6 +22,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class CartRepositoryImp implements CartRepository {
@@ -30,14 +31,12 @@ public class CartRepositoryImp implements CartRepository {
     private final CartItemJpaRepository cartItemJpaRepository;
     private final ProductJpaRepository productJpaRepository;
     private final GetCurrentUserUseCase getCurrentUserUseCase;
-    private final UserJpaRepository userJpaRepository;
 
-    public CartRepositoryImp(CartJpaRepository cartJpaRepository, CartItemJpaRepository cartItemJpaRepository, ProductJpaRepository productJpaRepository, GetCurrentUserUseCase getCurrentUserUseCase, UserJpaRepository userJpaRepository) {
+    public CartRepositoryImp(CartJpaRepository cartJpaRepository, CartItemJpaRepository cartItemJpaRepository, ProductJpaRepository productJpaRepository, GetCurrentUserUseCase getCurrentUserUseCase) {
         this.cartJpaRepository = cartJpaRepository;
         this.cartItemJpaRepository = cartItemJpaRepository;
         this.productJpaRepository = productJpaRepository;
         this.getCurrentUserUseCase = getCurrentUserUseCase;
-        this.userJpaRepository = userJpaRepository;
     }
 
     @Override
@@ -48,7 +47,7 @@ public class CartRepositoryImp implements CartRepository {
 
         User user = getCurrentUserUseCase.getCurrentUser();
 
-        CartEntity cartExists = cartJpaRepository.findByUser_Id(user.id()).orElseThrow(CartNotFoundException::new);
+        CartEntity cartExists = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(CartNotFoundException::new);
 
         Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(),cartExists.getId());
 
@@ -68,7 +67,7 @@ public class CartRepositoryImp implements CartRepository {
 
         User user = getCurrentUserUseCase.getCurrentUser();
 
-        CartEntity cartEntity = cartJpaRepository.findByUser_Id(user.id()).orElseThrow(() -> new UserNotFoundException(user.getUsername()));
+        CartEntity cartEntity = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(() -> new UserNotFoundException(user.getUsername()));
 
         return Cart.of(cartEntity);
     }
@@ -81,7 +80,7 @@ public class CartRepositoryImp implements CartRepository {
 
         User user = getCurrentUserUseCase.getCurrentUser();
 
-        CartEntity cartExists = cartJpaRepository.findByUser_Id(user.id()).orElseThrow(CartNotFoundException::new);
+        CartEntity cartExists = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(CartNotFoundException::new);
 
         CartItemEntity existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(),cartExists.getId()).orElseThrow(() -> new ProductNotFoundInCartException(productEntity.getId()));
 
@@ -96,12 +95,9 @@ public class CartRepositoryImp implements CartRepository {
     }
 
     @Override
-    public OperationResult createCart(UserEntity userEntity) {
-
-        cartJpaRepository.save(new CartEntity(userEntity));
-
+    public OperationResult createCart(UUID customerId) {
+        cartJpaRepository.save(new CartEntity(customerId));
         return OperationResult.SUCCESS;
-
     }
 
 
