@@ -13,9 +13,7 @@ import com.radon.exception.types.UserNotFoundException;
 import com.radon.infrastructure.entity.CartEntity;
 import com.radon.infrastructure.entity.CartItemEntity;
 import com.radon.infrastructure.entity.ProductEntity;
-import com.radon.infrastructure.entity.UserEntity;
 import com.radon.infrastructure.jpa.ProductJpaRepository;
-import com.radon.infrastructure.jpa.UserJpaRepository;
 import com.radon.infrastructure.repository.CartItemJpaRepository;
 import com.radon.infrastructure.repository.CartJpaRepository;
 import jakarta.transaction.Transactional;
@@ -49,13 +47,13 @@ public class CartRepositoryImp implements CartRepository {
 
         CartEntity cartExists = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(CartNotFoundException::new);
 
-        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(),cartExists.getId());
+        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(), cartExists.getId());
 
-        if(existingItem.isPresent()){
+        if (existingItem.isPresent()) {
             CartItemEntity cartItemEntity = existingItem.get();
             cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
-        }else{
-            cartItemJpaRepository.save(new CartItemEntity(cartExists,productEntity,1));
+        } else {
+            cartItemJpaRepository.save(new CartItemEntity(cartExists, productEntity, 1));
         }
 
         return OperationResult.SUCCESS;
@@ -82,11 +80,11 @@ public class CartRepositoryImp implements CartRepository {
 
         CartEntity cartExists = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(CartNotFoundException::new);
 
-        CartItemEntity existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(),cartExists.getId()).orElseThrow(() -> new ProductNotFoundInCartException(productEntity.getId()));
+        CartItemEntity existingItem = cartItemJpaRepository.findByProduct_IdAndCart_Id(productEntity.getId(), cartExists.getId()).orElseThrow(() -> new ProductNotFoundInCartException(productEntity.getId()));
 
-        if(existingItem.getQuantity() > 1){
+        if (existingItem.getQuantity() > 1) {
             existingItem.setQuantity(existingItem.getQuantity() - 1);
-        }else{
+        } else {
             cartItemJpaRepository.delete(existingItem);
         }
 
