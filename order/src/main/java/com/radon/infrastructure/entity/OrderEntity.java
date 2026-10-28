@@ -27,9 +27,8 @@ public class OrderEntity {
     @Column(name = "order_number", nullable = false)
     private String orderNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "user_id", nullable = false,updatable = false)
+    private UUID userId;
 
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
@@ -55,9 +54,9 @@ public class OrderEntity {
     private Instant updatedAt;
 
 
-    public OrderEntity(String orderNumber,UserEntity user, OrderStatus orderStatus, BigDecimal totalPrice, String paymentId, String idempotencyKey) {
+    public OrderEntity(String orderNumber,UUID userId, OrderStatus orderStatus, BigDecimal totalPrice, String paymentId, String idempotencyKey) {
         this.orderNumber = orderNumber;
-        this.user = user;
+        this.userId = userId;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
         this.paymentId = paymentId;

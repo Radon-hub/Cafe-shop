@@ -25,9 +25,8 @@ public class CartItemEntity {
     @JoinColumn(name = "cart_id", nullable = false)
     private CartEntity cart;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
+    @Column(name = "product_id",nullable = false,updatable = false)
+    private Long productId;
 
     @Column(name = "quantity",nullable = false)
     private int quantity;
@@ -40,9 +39,9 @@ public class CartItemEntity {
     @Column(name = "updated_at",nullable = false)
     private Instant updatedAt;
 
-    public CartItemEntity(CartEntity cart, ProductEntity product, int quantity) {
+    public CartItemEntity(CartEntity cart, Long productId, int quantity) {
         this.cart = cart;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 }

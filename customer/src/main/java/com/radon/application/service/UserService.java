@@ -5,6 +5,7 @@ import com.radon.application.port.in.LoginUserUseCase;
 import com.radon.application.port.in.RefreshTokenUseCase;
 import com.radon.application.port.in.RegisterUserUseCase;
 import com.radon.application.port.out.UserRepository;
+import com.radon.contracts.UserContract;
 import com.radon.contracts.UserRegisterEvent;
 import com.radon.domain.JwtTokens;
 import com.radon.domain.User;
@@ -46,12 +47,17 @@ public class UserService implements RegisterUserUseCase, LoginUserUseCase, Refre
     }
 
     @Override
-    public User getCurrentUser() {
+    public UserContract getCurrentUser() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails userDetails) {
-            return (User) userDetails;
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User user) {
+            return UserContract.builder()
+                    .id(user.id())
+                    .firstName(user.firstName())
+                    .lastName(user.lastName())
+                    .userName(user.userName())
+                    .build();
         }
 
         throw new UnAuthorizedException();

@@ -1,0 +1,7 @@
+model\CategoryDeleteRequestTest.class
+model\InventoryResponseTest.class
+model\CategoryResponseTest.class
+model\CategoryUpdateRequestTest.class
+model\InventoryUpdateRequestTest.class
+model\CategoryAddRequestTest.class
+model\EditWarehouseRequestTest.class

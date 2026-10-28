@@ -1,5 +1,6 @@
 package com.radon.domain;
 
+import com.radon.contracts.ProductContract;
 import com.radon.infrastructure.entity.ProductEntity;
 import com.radon.presentation.dto.ProductAddRequest;
 import com.radon.presentation.dto.ProductUpdateRequest;
@@ -48,7 +49,17 @@ public record Product(
                 .price(req.price())
                 .build();
     }
-
+    public static ProductContract toContract(Product product) {
+        return ProductContract.builder()
+                .id(product.id())
+                .name(product.name())
+                .description(product.description())
+                .categoryName(product.category.name())
+                .inventoryId(product.inventory.id())
+                .weight(product.weight())
+                .price(product.price())
+                .build();
+    }
     public ProductBuilder toBuilder(){
         return Product.builder()
                 .name(this.name)

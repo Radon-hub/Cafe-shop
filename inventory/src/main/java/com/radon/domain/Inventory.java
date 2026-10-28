@@ -15,7 +15,10 @@ public record Inventory(
         return Inventory.builder()
                 .id(inventoryEntity.getId())
                 .count(inventoryEntity.getCount())
-                .wareHouse(Warehouse.of(inventoryEntity.getWareHouse()))
+                .wareHouse(Warehouse.builder()
+                        .id(inventoryEntity.getWareHouse().getId())
+                        .warehouse(inventoryEntity.getWareHouse().getWarehouse())
+                        .build())
                 .productId(inventoryEntity.getProduct().getId())
                 .build();
     }

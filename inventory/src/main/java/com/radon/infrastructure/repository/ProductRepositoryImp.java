@@ -22,7 +22,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class ProductRepositoryImp implements ProductRepository {
@@ -38,6 +40,12 @@ public class ProductRepositoryImp implements ProductRepository {
     }
 
     @Override
+    public List<Product> getProductsByIds(List<Long> ids) {
+        return productJpaRepository.findByIds(ids).stream().map(Product::of).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Product getProductById(Long id) {
 
         ProductEntity productEntity = productJpaRepository.findById(id).orElseThrow(() ->

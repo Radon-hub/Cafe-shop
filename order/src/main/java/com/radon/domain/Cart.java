@@ -1,5 +1,6 @@
 package com.radon.domain;
 
+import com.radon.contracts.ProductContract;
 import com.radon.infrastructure.entity.CartEntity;
 import lombok.Builder;
 import java.time.LocalDateTime;
@@ -22,13 +23,8 @@ public record Cart(
                         CartItem.builder()
                                 .id(item.getId())
                                 .product(
-                                        Product.builder()
-                                                .id(item.getProduct().getId())
-                                                .name(item.getProduct().getName())
-                                                .price(item.getProduct().getPrice())
-                                                .weight(item.getProduct().getWeight())
-                                                .category(Category.of(item.getProduct().getCategory()))
-                                                .description(item.getProduct().getDescription())
+                                        ProductContract.builder()
+                                                .id(item.getProductId())
                                                 .build()
                                 )
                                 .quantity(item.getQuantity())

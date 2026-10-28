@@ -3,6 +3,8 @@ C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\appl
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\AddWarehouseUseCase.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\DeleteCategoryUseCase.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\GetProductByIdUseCase.java
+C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\GetProductContractByIdUseCase.java
+C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\GetProductContractsByIdsUseCase.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\GetProductsByCategoryUseCase.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\SearchCategoryUseCase.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\in\SearchProductUseCase.java
@@ -16,7 +18,7 @@ C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\appl
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\port\out\WarehouseRepository.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\service\CategoryService.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\service\InventoryService.java
-C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\service\ProductService.java
+C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\service\ProductsService.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\application\service\WarehouseService.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\domain\Category.java
 C:\Spring boot projects\CafeShop\CafeShop\inventory\src\main\java\com\radon\domain\Inventory.java

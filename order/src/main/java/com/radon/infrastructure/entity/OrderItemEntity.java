@@ -22,9 +22,8 @@ public class OrderItemEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id",nullable = false)
-    private ProductEntity product;
+    @Column(name = "product_id",nullable = false,updatable = false)
+    private Long productId;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
@@ -44,8 +43,8 @@ public class OrderItemEntity {
     @Column(name = "updated_at",nullable = false)
     private Instant updatedAt;
 
-    public OrderItemEntity(ProductEntity product, Integer quantity, BigDecimal price,OrderEntity order) {
-        this.product = product;
+    public OrderItemEntity(Long productId, Integer quantity, BigDecimal price,OrderEntity order) {
+        this.productId = productId;
         this.quantity = quantity;
         this.price = price;
         this.order = order;
