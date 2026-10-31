@@ -6,7 +6,8 @@ import com.radon.infrastructure.entity.InventoryEntity;
 import com.radon.infrastructure.entity.ProductEntity;
 
 public interface InventoryRepository {
-    Inventory updateInventory(Inventory inventory);
+    OperationResult updateInventoryWarehouse(Inventory inventory);
+    OperationResult updateInventoryCount(Inventory inventory);
     InventoryEntity addInventory(ProductEntity product, Inventory inventory);
     OperationResult deleteInventory(ProductEntity product,Inventory inventory);
 }

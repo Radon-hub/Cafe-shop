@@ -27,7 +27,23 @@ public class InventoryRepositoryImp implements InventoryRepository {
 
     @Override
     @Transactional
-    public Inventory updateInventory(Inventory inventory) {
+    public OperationResult updateInventoryWarehouse(Inventory inventory) {
+
+        InventoryEntity inventoryEntity = inventoryJpaRepository.findByIdAndProduct_Id(inventory.id(),inventory.productId()).orElseThrow(
+                () -> new InventoryNotFoundException(inventory.id(), inventory.productId())
+        );
+
+        WarehouseEntity warehouse = warehouseRepository.findWarehouseById(inventory.wareHouse().id());
+
+        inventoryEntity.setWareHouse(warehouse);
+
+        return OperationResult.SUCCESS;
+
+    }
+
+    @Override
+    @Transactional
+    public OperationResult updateInventoryCount(Inventory inventory) {
 
         InventoryEntity inventoryEntity = inventoryJpaRepository.findByIdAndProduct_Id(inventory.id(),inventory.productId()).orElseThrow(
                 () -> new InventoryNotFoundException(inventory.id(), inventory.productId())
@@ -35,23 +51,7 @@ public class InventoryRepositoryImp implements InventoryRepository {
 
         inventoryEntity.setCount(inventory.count());
 
-        if(inventory.wareHouse().id() != null && !inventory.wareHouse().id().equals(inventoryEntity.getWareHouse().getId())){
-            WarehouseEntity warehouse = warehouseRepository.findWarehouseById(inventory.wareHouse().id());
-            inventoryEntity.setWareHouse(warehouse);
-
-            return Inventory.builder()
-                    .id(inventory.id())
-                    .count(inventory.count())
-                    .productId(inventory.productId())
-                    .wareHouse(Warehouse.builder()
-                            .id(warehouse.getId())
-                            .warehouse(warehouse.getWarehouse())
-                            .build()
-                    )
-                    .build();
-        }
-
-        return inventory;
+        return OperationResult.SUCCESS;
     }
 
     @Override

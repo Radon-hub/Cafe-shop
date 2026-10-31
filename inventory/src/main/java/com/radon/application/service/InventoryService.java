@@ -1,12 +1,14 @@
 package com.radon.application.service;
 
-import com.radon.application.port.in.UpdateInventoryUseCase;
+import com.radon.OperationResult;
+import com.radon.application.port.in.UpdateInventoryCountUseCase;
+import com.radon.application.port.in.UpdateInventoryWarehouseUseCase;
 import com.radon.application.port.out.InventoryRepository;
 import com.radon.domain.Inventory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class InventoryService implements UpdateInventoryUseCase {
+public class InventoryService implements UpdateInventoryCountUseCase, UpdateInventoryWarehouseUseCase {
 
     private final InventoryRepository inventoryRepository;
 
@@ -15,7 +17,12 @@ public class InventoryService implements UpdateInventoryUseCase {
     }
 
     @Override
-    public Inventory updateInventory(Inventory inventory) {
-        return inventoryRepository.updateInventory(inventory);
+    public OperationResult updateInventoryCount(Inventory inventory) {
+        return inventoryRepository.updateInventoryCount(inventory);
+    }
+
+    @Override
+    public OperationResult updateInventoryWarehouse(Inventory inventory) {
+        return  inventoryRepository.updateInventoryWarehouse(inventory);
     }
 }

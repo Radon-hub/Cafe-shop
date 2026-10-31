@@ -1,21 +1,17 @@
 package model;
 
 import com.radon.exception.ExceptionModel;
-import com.radon.presentation.dto.InventoryUpdateRequest;
+import com.radon.presentation.dto.InventoryCountUpdateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-class InventoryUpdateRequestTest {
+class InventoryCountUpdateRequestTest {
     @Test
     public void success(){
-        InventoryUpdateRequest add = new InventoryUpdateRequest(1L,0,0L);
-        InventoryUpdateRequest add2 = InventoryUpdateRequest.builder()
-                .productId(1L)
-                .wareHouseId(0L)
-                .count(0)
-                .build();
+        InventoryCountUpdateRequest add = new InventoryCountUpdateRequest(0);
+        InventoryCountUpdateRequest add2 = new InventoryCountUpdateRequest(0);
         Assertions.assertNotNull(add);
         Assertions.assertEquals(add,add2);
 
@@ -24,7 +20,7 @@ class InventoryUpdateRequestTest {
     @Test
     public void fail(){
         ExceptionModel model = Assertions.assertThrows(ExceptionModel.class, ()->{
-            new InventoryUpdateRequest(null,null,null);
+            new InventoryCountUpdateRequest(null);
         });
 
         log.info("[TEST] Fail : {}", model.getMessage());

@@ -12,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("warehouse")
+@RequestMapping("api/v1/warehouse")
 public class WarehouseController {
 
     private final AddWarehouseUseCase addWarehouseUseCase;
