@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public record Cart(
         UUID id,
         User user,
+        CartStatus status,
         List<CartItem> items,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -19,6 +20,7 @@ public record Cart(
     public static Cart of(CartEntity cartEntity) {
         return Cart.builder()
                 .id(cartEntity.getId())
+                .status(cartEntity.getStatus())
                 .items(cartEntity.getItems().stream().map( item ->
                         CartItem.builder()
                                 .id(item.getId())

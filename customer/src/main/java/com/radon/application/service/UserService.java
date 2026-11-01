@@ -6,34 +6,27 @@ import com.radon.application.port.in.RefreshTokenUseCase;
 import com.radon.application.port.in.RegisterUserUseCase;
 import com.radon.application.port.out.UserRepository;
 import com.radon.contracts.UserContract;
-import com.radon.contracts.UserRegisterEvent;
 import com.radon.domain.JwtTokens;
 import com.radon.domain.User;
 import com.radon.exception.types.UnAuthorizedException;
 import jakarta.transaction.Transactional;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements RegisterUserUseCase, LoginUserUseCase, RefreshTokenUseCase, GetCurrentUserUseCase {
 
     private final UserRepository userRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
-    public UserService(UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.eventPublisher = eventPublisher;
     }
 
     @Override
     @Transactional
     public User registerUser(User user) {
-        User registeredUser = userRepository.registerUser(user);
-        eventPublisher.publishEvent(new UserRegisterEvent(registeredUser.id()));
-        return registeredUser;
+        return userRepository.registerUser(user);
     }
 
     @Override

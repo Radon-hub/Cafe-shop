@@ -1,5 +1,6 @@
 package com.radon.infrastructure.entity;
 
+import com.radon.domain.CartStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,10 @@ public class CartEntity {
 
     @Column(name = "customer_id",nullable = false,updatable = false)
     private UUID customerId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status",nullable = false)
+    private CartStatus status = CartStatus.ACTIVE;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

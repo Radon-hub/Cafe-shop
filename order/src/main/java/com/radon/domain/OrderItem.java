@@ -10,6 +10,9 @@ public record OrderItem(
     UUID id,
     Product product,
     int quantity,
-    BigDecimal price
+    BigDecimal price,
+    BigDecimal totalPrice,
+    String productName,
+    String productDescription
 ) {
 }

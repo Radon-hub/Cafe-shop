@@ -16,6 +16,7 @@ public record Order(
         BigDecimal totalPrice,
         String paymentId,
         String idempotencyKey,
+        String address,
         List<OrderItem> items,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

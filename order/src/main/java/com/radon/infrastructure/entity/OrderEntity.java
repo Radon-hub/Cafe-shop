@@ -30,6 +30,7 @@ public class OrderEntity {
     @Column(name = "user_id", nullable = false,updatable = false)
     private UUID userId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
@@ -41,6 +42,9 @@ public class OrderEntity {
 
     @Column(name = "idempotency_key", nullable = false)
     private String idempotencyKey;
+
+    @Column(name = "address", nullable = false)
+    private String address;
 
     @OneToMany(mappedBy = "order")
     private List<OrderItemEntity> orderItems = new ArrayList<>();
@@ -54,13 +58,15 @@ public class OrderEntity {
     private Instant updatedAt;
 
 
-    public OrderEntity(String orderNumber,UUID userId, OrderStatus orderStatus, BigDecimal totalPrice, String paymentId, String idempotencyKey) {
+    public OrderEntity(String orderNumber,UUID userId, OrderStatus orderStatus, BigDecimal totalPrice, String paymentId, String idempotencyKey,String address,List<OrderItemEntity> orderItems) {
         this.orderNumber = orderNumber;
         this.userId = userId;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
         this.paymentId = paymentId;
         this.idempotencyKey = idempotencyKey;
+        this.address = address;
+        this.orderItems = orderItems;
     }
 
 }

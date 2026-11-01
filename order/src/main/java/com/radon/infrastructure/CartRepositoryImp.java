@@ -9,6 +9,7 @@ import com.radon.contracts.ProductContract;
 import com.radon.contracts.UserContract;
 import com.radon.domain.Cart;
 import com.radon.domain.CartItem;
+import com.radon.domain.CartStatus;
 import com.radon.domain.Product;
 import com.radon.exception.types.CartNotFoundException;
 import com.radon.exception.types.ProductNotFoundInCartException;
@@ -49,15 +50,16 @@ public class CartRepositoryImp implements CartRepository {
 
         UserContract user = getCurrentUserUseCase.getCurrentUser();
 
-        CartEntity cartExists = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(CartNotFoundException::new);
+        CartEntity cartEntity = cartJpaRepository.findByCustomerIdAndStatus(user.id(), CartStatus.ACTIVE)
+                .orElseGet(() -> createCart(user.id()));
 
-        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProductIdAndCart_Id(productContract.id(), cartExists.getId());
+        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProductIdAndCart_Id(productContract.id(), cartEntity.getId());
 
         if (existingItem.isPresent()) {
             CartItemEntity cartItemEntity = existingItem.get();
             cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
         } else {
-            cartItemJpaRepository.save(new CartItemEntity(cartExists, productContract.id(), 1));
+            cartItemJpaRepository.save(new CartItemEntity(cartEntity, productContract.id(), 1));
         }
 
         return OperationResult.SUCCESS;
@@ -69,7 +71,7 @@ public class CartRepositoryImp implements CartRepository {
 
         UserContract user = getCurrentUserUseCase.getCurrentUser();
 
-        CartEntity cartEntity = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(() -> new UserNotFoundException(user.userName()));
+        CartEntity cartEntity = cartJpaRepository.findByCustomerIdAndStatus(user.id(),CartStatus.ACTIVE).orElseThrow(() -> new UserNotFoundException(user.userName()));
 
         List<Long> listOfProductIds = cartEntity.getItems().stream().map(CartItemEntity::getProductId).collect(Collectors.toList());
 
@@ -77,6 +79,7 @@ public class CartRepositoryImp implements CartRepository {
 
         return Cart.builder()
                 .id(cartEntity.getId())
+                .status(cartEntity.getStatus())
                 .items(cartEntity.getItems().stream().map( item -> {
 
                     ProductContract productContract = productContractsByIds.stream().filter(it -> it.id().equals(item.getProductId())).findFirst().orElse(null);
@@ -99,7 +102,7 @@ public class CartRepositoryImp implements CartRepository {
 
         UserContract user = getCurrentUserUseCase.getCurrentUser();
 
-        CartEntity cartExists = cartJpaRepository.findByCustomerId(user.id()).orElseThrow(CartNotFoundException::new);
+        CartEntity cartExists = cartJpaRepository.findByCustomerIdAndStatus(user.id(),CartStatus.ACTIVE).orElseThrow(CartNotFoundException::new);
 
         CartItemEntity existingItem = cartItemJpaRepository.findByProductIdAndCart_Id(productContract.id(), cartExists.getId()).orElseThrow(() -> new ProductNotFoundInCartException(productContract.id()));
 
@@ -114,9 +117,9 @@ public class CartRepositoryImp implements CartRepository {
     }
 
     @Override
-    public OperationResult createCart(UUID customerId) {
-        cartJpaRepository.save(new CartEntity(customerId));
-        return OperationResult.SUCCESS;
+    @Transactional
+    public CartEntity createCart(UUID customerId) {
+        return cartJpaRepository.save(new CartEntity(customerId));
     }
 
 

@@ -31,6 +31,15 @@ public class OrderItemEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    @Column(name = "total_price", nullable = false)
+    private BigDecimal totalPrice;
+
+    @Column(name = "product_name", nullable = false)
+    private String productName;
+
+    @Column(name = "product_desc", nullable = false)
+    private String productDesc;
+
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private OrderEntity order;

@@ -2,20 +2,17 @@ package com.radon.application.service;
 
 import com.radon.OperationResult;
 import com.radon.application.port.in.AddToCartUseCase;
-import com.radon.application.port.in.CreateCartUseCase;
 import com.radon.application.port.in.GetCartUseCase;
 import com.radon.application.port.in.RemoveFromCartUseCase;
 import com.radon.application.port.out.CartRepository;
 import com.radon.domain.Cart;
 import com.radon.domain.Product;
-import com.radon.domain.User;
-import com.radon.infrastructure.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, GetCartUseCase, CreateCartUseCase {
+public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, GetCartUseCase {
 
     private final CartRepository cartRepository;
 
@@ -38,8 +35,4 @@ public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, Get
         return cartRepository.getCart();
     }
 
-    @Override
-    public OperationResult createCart(UUID customerId) {
-        return cartRepository.createCart(customerId);
-    }
 }

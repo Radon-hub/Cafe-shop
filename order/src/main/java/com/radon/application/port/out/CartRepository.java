@@ -3,6 +3,7 @@ package com.radon.application.port.out;
 import com.radon.OperationResult;
 import com.radon.domain.Cart;
 import com.radon.domain.Product;
+import com.radon.infrastructure.entity.CartEntity;
 import com.radon.infrastructure.entity.UserEntity;
 
 import java.util.UUID;
@@ -14,5 +15,5 @@ public interface CartRepository {
 
     OperationResult removeFromCart(Product product);
 
-    OperationResult createCart(UUID customerId);
+    CartEntity createCart(UUID customerId);
 }
