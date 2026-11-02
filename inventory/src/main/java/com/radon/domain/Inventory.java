@@ -1,5 +1,6 @@
 package com.radon.domain;
 
+import com.radon.contracts.InventoryContract;
 import com.radon.infrastructure.entity.InventoryEntity;
 import lombok.Builder;
 
@@ -20,6 +21,14 @@ public record Inventory(
                         .warehouse(inventoryEntity.getWareHouse().getWarehouse())
                         .build())
                 .productId(inventoryEntity.getProduct().getId())
+                .build();
+    }
+
+    public static InventoryContract toContract(Inventory inventory) {
+        return InventoryContract.builder()
+                .productId(inventory.productId())
+                .count(inventory.count())
+                .wareHouse(inventory.wareHouse.warehouse())
                 .build();
     }
 

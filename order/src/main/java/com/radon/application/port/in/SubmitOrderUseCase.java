@@ -1,8 +1,8 @@
 package com.radon.application.port.in;
 
 import com.radon.OperationResult;
-import com.radon.domain.Order;
+import com.radon.presentation.dto.SubmitOrderRequest;
 
 public interface SubmitOrderUseCase {
-    OperationResult submitOrder(Order order);
+    OperationResult submitOrder(SubmitOrderRequest request);
 }

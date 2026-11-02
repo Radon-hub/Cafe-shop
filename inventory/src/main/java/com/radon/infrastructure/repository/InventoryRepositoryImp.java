@@ -3,6 +3,7 @@ package com.radon.infrastructure.repository;
 import com.radon.OperationResult;
 import com.radon.application.port.out.InventoryRepository;
 import com.radon.application.port.out.WarehouseRepository;
+import com.radon.contracts.InventoryContract;
 import com.radon.domain.Inventory;
 import com.radon.domain.Warehouse;
 import com.radon.exception.types.InventoryExistsException;
@@ -14,6 +15,9 @@ import com.radon.infrastructure.jpa.InventoryJpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Repository
 public class InventoryRepositoryImp implements InventoryRepository {
 
@@ -23,6 +27,18 @@ public class InventoryRepositoryImp implements InventoryRepository {
     public InventoryRepositoryImp(InventoryJpaRepository inventoryJpaRepository, WarehouseRepository warehouseRepository) {
         this.inventoryJpaRepository = inventoryJpaRepository;
         this.warehouseRepository = warehouseRepository;
+    }
+
+    @Override
+    public Inventory getInventoryByProductId(Long productId) {
+        return Inventory.of(
+                inventoryJpaRepository.findByProduct_Id(productId).orElseThrow(() -> new InventoryNotFoundException(productId))
+        );
+    }
+
+    @Override
+    public List<Inventory> getInventoriesByProductIds(List<Long> productIds) {
+        return inventoryJpaRepository.getByProductIdList(productIds).stream().map(Inventory::of).collect(Collectors.toList());
     }
 
     @Override

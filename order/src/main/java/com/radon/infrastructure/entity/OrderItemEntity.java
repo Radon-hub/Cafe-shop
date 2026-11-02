@@ -52,11 +52,14 @@ public class OrderItemEntity {
     @Column(name = "updated_at",nullable = false)
     private Instant updatedAt;
 
-    public OrderItemEntity(Long productId, Integer quantity, BigDecimal price,OrderEntity order) {
+    public OrderItemEntity(Long productId, Integer quantity, BigDecimal price,OrderEntity order,String productName, String productDesc,BigDecimal totalPrice) {
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
         this.order = order;
+        this.productName = productName;
+        this.productDesc = productDesc;
+        this.totalPrice = totalPrice;
     }
 
 }

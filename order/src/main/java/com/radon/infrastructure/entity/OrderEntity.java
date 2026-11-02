@@ -32,7 +32,7 @@ public class OrderEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
-    private OrderStatus orderStatus;
+    private OrderStatus orderStatus = OrderStatus.CREATED;
 
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
@@ -58,7 +58,7 @@ public class OrderEntity {
     private Instant updatedAt;
 
 
-    public OrderEntity(String orderNumber,UUID userId, OrderStatus orderStatus, BigDecimal totalPrice, String paymentId, String idempotencyKey,String address,List<OrderItemEntity> orderItems) {
+    public OrderEntity(String orderNumber,UUID userId, OrderStatus orderStatus, BigDecimal totalPrice, String paymentId, String idempotencyKey,String address) {
         this.orderNumber = orderNumber;
         this.userId = userId;
         this.orderStatus = orderStatus;
@@ -66,7 +66,6 @@ public class OrderEntity {
         this.paymentId = paymentId;
         this.idempotencyKey = idempotencyKey;
         this.address = address;
-        this.orderItems = orderItems;
     }
 
 }
