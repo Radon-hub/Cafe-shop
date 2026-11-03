@@ -57,8 +57,10 @@ public class OrderRepositoryImp implements OrderRepository {
 
         CartEntity cartEntity = cartJpaRepository.findById(request.cartId()).orElseThrow(CartNotFoundException::new);
 
-        if(cartEntity.getStatus() != CartStatus.ACTIVE){
-            throw new CartNotAvailableException();
+        switch (cartEntity.getStatus()) {
+            case ACTIVE -> {}
+            case NEED_UPDATE -> throw new CartNeedUpdateException();
+            default -> throw new CartNotAvailableException();
         }
 
         List<Long> listOfProductIds = cartEntity.getItems().stream().map(CartItemEntity::getProductId).collect(Collectors.toList());

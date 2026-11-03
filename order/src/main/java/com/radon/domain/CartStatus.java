@@ -5,5 +5,6 @@ import java.io.Serializable;
 public enum CartStatus implements Serializable {
     ACTIVE,
     CHECKED_OUT,
+    NEED_UPDATE,
     ABANDONED
 }

@@ -9,12 +9,14 @@ import java.util.UUID;
 @Builder
 public record CartResponse(
         UUID id,
-        List<CartItemResponse> items
+        List<CartItemResponse> items,
+        Boolean needUpdate
 ) {
     public static CartResponse of(Cart cart) {
         return new CartResponse(
                 cart.id(),
-                cart.items().stream().map(CartItemResponse::of).toList()
+                cart.items().stream().map(CartItemResponse::of).toList(),
+                cart.needUpdate()
         );
     }
 }

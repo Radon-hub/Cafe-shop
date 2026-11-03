@@ -14,9 +14,16 @@ public record Cart(
         User user,
         CartStatus status,
         List<CartItem> items,
+        Boolean needUpdate,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
+
+    @Override
+    public Boolean needUpdate() {
+        return needUpdate ? Boolean.TRUE : Boolean.FALSE;
+    }
+
     public static Cart of(CartEntity cartEntity) {
         return Cart.builder()
                 .id(cartEntity.getId())

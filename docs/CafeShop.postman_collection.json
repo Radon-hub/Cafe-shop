@@ -13,7 +13,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"firstName\": \"alireza\",\r\n  \"lastName\": \"kharazan\",\r\n  \"userName\": \"09123456789\",\r\n  \"password\": \"123456\",\r\n  \"roles\": [\"USER\",\"ADMIN\"]\r\n}",
+          "raw": "{\r\n  \"firstName\": \"alireza\",\r\n  \"lastName\": \"kharazan\",\r\n  \"userName\": \"09369101332\",\r\n  \"password\": \"123456\",\r\n  \"roles\": [\"USER\",\"ADMIN\"]\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -42,7 +42,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"userName\": \"09123456789\",\r\n  \"password\": \"123456\"\r\n}",
+          "raw": "{\r\n  \"userName\": \"09369101334\",\r\n  \"password\": \"1234567\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -416,7 +416,7 @@
       "response": []
     },
     {
-      "name": "Cart - Get products",
+      "name": "Cart - Get",
       "request": {
         "method": "GET",
         "header": [],
@@ -435,6 +435,47 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Order - Submit",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwOTM2OTEwMTMzNCIsInR5cGUiOiJBQ0NFU1MiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn0seyJhdXRob3JpdHkiOiJwcm9kdWN0OnJlYWQifV0sImlhdCI6MTc5MzY1NzgyNiwiZXhwIjoxNzkzNjYxNDI2fQ.CRSj2B-l9gmJzi99r85DvyGqsklI8gzigvzMhLS6eSM",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"cartId\": \"9a3873a9-d9b5-4be2-be73-26924b9ea765\",\r\n  \"address\": \"Tehran - Shariati St - Saghafi avenue - No 45\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order/submit",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order",
+            "submit"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "auth": {
@@ -442,7 +483,7 @@
     "bearer": [
       {
         "key": "token",
-        "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwOTM2OTEwMTMzNCIsInR5cGUiOiJBQ0NFU1MiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9VU0VSIn0seyJhdXRob3JpdHkiOiJwcm9kdWN0OnJlYWQifV0sImlhdCI6MTc5MzU3MjU1MSwiZXhwIjoxNzkzNTc2MTUxfQ.6ICKs_1no8n0HH6cGSeVMOTGb_S0SpysvI7W8tW9h3g",
+        "value": "{{access_token}}",
         "type": "string"
       }
     ]
@@ -469,6 +510,24 @@
           ""
         ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "Host",
+      "value": ""
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "card_id",
+      "value": ""
     }
   ]
 }
