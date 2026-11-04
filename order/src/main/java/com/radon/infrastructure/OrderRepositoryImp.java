@@ -3,6 +3,7 @@ package com.radon.infrastructure;
 import com.radon.OperationResult;
 import com.radon.application.port.in.GetCurrentUserUseCase;
 import com.radon.application.port.in.GetProductContractsByIdsUseCase;
+import com.radon.application.port.in.UpdateCartStatusUseCase;
 import com.radon.application.port.out.OrderRepository;
 import com.radon.contracts.GetInventoryContractsByProductIdsUseCase;
 import com.radon.contracts.InventoryContract;
@@ -11,6 +12,7 @@ import com.radon.contracts.UserContract;
 import com.radon.domain.CartStatus;
 import com.radon.domain.OrderNumberGenerator;
 import com.radon.domain.OrderStatus;
+import com.radon.exception.ExceptionModel;
 import com.radon.exception.types.*;
 import com.radon.infrastructure.entity.CartEntity;
 import com.radon.infrastructure.entity.CartItemEntity;
@@ -22,6 +24,7 @@ import com.radon.infrastructure.repository.OrderItemJpaRepository;
 import com.radon.infrastructure.repository.OrderJpaRepository;
 import com.radon.presentation.dto.SubmitOrderRequest;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -36,14 +39,16 @@ public class OrderRepositoryImp implements OrderRepository {
     private final OrderJpaRepository orderJpaRepository;
     private final OrderItemJpaRepository orderItemJpaRepository;
     private final CartJpaRepository cartJpaRepository;
+    private final UpdateCartStatusUseCase updateCartStatusUseCase;
     private final GetCurrentUserUseCase getCurrentUserUseCase;
     private final GetProductContractsByIdsUseCase getProductContractsByIdsUseCase;
     private final GetInventoryContractsByProductIdsUseCase getInventoryContractsByProductIdsUseCase;
 
-    public OrderRepositoryImp(OrderJpaRepository orderJpaRepository, OrderItemJpaRepository orderItemJpaRepository, CartJpaRepository cartJpaRepository, GetCurrentUserUseCase getCurrentUserUseCase, GetProductContractsByIdsUseCase getProductContractsByIdsUseCase, GetInventoryContractsByProductIdsUseCase getInventoryContractsByProductIdsUseCase) {
+    public OrderRepositoryImp(OrderJpaRepository orderJpaRepository, OrderItemJpaRepository orderItemJpaRepository, CartJpaRepository cartJpaRepository, UpdateCartStatusUseCase updateCartStatusUseCase, GetCurrentUserUseCase getCurrentUserUseCase, GetProductContractsByIdsUseCase getProductContractsByIdsUseCase, GetInventoryContractsByProductIdsUseCase getInventoryContractsByProductIdsUseCase) {
         this.orderJpaRepository = orderJpaRepository;
         this.orderItemJpaRepository = orderItemJpaRepository;
         this.cartJpaRepository = cartJpaRepository;
+        this.updateCartStatusUseCase = updateCartStatusUseCase;
         this.getCurrentUserUseCase = getCurrentUserUseCase;
         this.getProductContractsByIdsUseCase = getProductContractsByIdsUseCase;
         this.getInventoryContractsByProductIdsUseCase = getInventoryContractsByProductIdsUseCase;
@@ -78,9 +83,11 @@ public class OrderRepositoryImp implements OrderRepository {
 
         inventories.forEach(inventory -> {
             if(inventory.count() == 0){
+                updateCartStatusUseCase.updateCartStatus(cartEntity.getId(), CartStatus.NEED_UPDATE);
                 throw new ProductOutOfStockException(inventory.productId().toString());
             }
             if(quantitiesByProductId.get(inventory.productId()) > inventory.count()){
+                updateCartStatusUseCase.updateCartStatus(cartEntity.getId(), CartStatus.NEED_UPDATE);
                 throw new ProductNotEnoughAvailableQuantityException(inventory.productId().toString());
             }
         });

@@ -4,15 +4,17 @@ import com.radon.OperationResult;
 import com.radon.application.port.in.AddToCartUseCase;
 import com.radon.application.port.in.GetCartUseCase;
 import com.radon.application.port.in.RemoveFromCartUseCase;
+import com.radon.application.port.in.UpdateCartStatusUseCase;
 import com.radon.application.port.out.CartRepository;
 import com.radon.domain.Cart;
+import com.radon.domain.CartStatus;
 import com.radon.domain.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, GetCartUseCase {
+public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, GetCartUseCase, UpdateCartStatusUseCase {
 
     private final CartRepository cartRepository;
 
@@ -35,4 +37,8 @@ public class CartService implements AddToCartUseCase, RemoveFromCartUseCase, Get
         return cartRepository.getCart();
     }
 
+    @Override
+    public void updateCartStatus(UUID cartId, CartStatus cartStatus) {
+        cartRepository.updateCartStatus(cartId,cartStatus);
+    }
 }

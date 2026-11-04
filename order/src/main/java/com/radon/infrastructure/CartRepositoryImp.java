@@ -15,8 +15,9 @@ import com.radon.infrastructure.entity.CartEntity;
 import com.radon.infrastructure.entity.CartItemEntity;
 import com.radon.infrastructure.repository.CartItemJpaRepository;
 import com.radon.infrastructure.repository.CartJpaRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -157,6 +158,12 @@ public class CartRepositoryImp implements CartRepository {
     @Transactional
     public CartEntity createCart(UUID customerId) {
         return cartJpaRepository.save(new CartEntity(customerId));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateCartStatus(UUID cartId, CartStatus cartStatus) {
+        cartJpaRepository.updateCartStatus(cartId,cartStatus);
     }
 
 
