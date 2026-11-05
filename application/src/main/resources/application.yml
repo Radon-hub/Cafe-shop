@@ -1,5 +1,5 @@
 spring:
   application:
-    name: application
+    name: cafe-shop
   profiles:
     active: dev

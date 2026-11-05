@@ -68,4 +68,20 @@ public class OrderEntity {
         this.address = address;
     }
 
+    @Override
+    public String toString() {
+        return "OrderEntity{" +
+                "id=" + id +
+                ", orderNumber='" + orderNumber + '\'' +
+                ", userId=" + userId +
+                ", orderStatus=" + orderStatus +
+                ", totalPrice=" + totalPrice +
+                ", paymentId='" + paymentId + '\'' +
+                ", idempotencyKey='" + idempotencyKey + '\'' +
+                ", address='" + address + '\'' +
+                ", orderItems=" + orderItems +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

@@ -62,4 +62,19 @@ public class OrderItemEntity {
         this.totalPrice = totalPrice;
     }
 
+    @Override
+    public String toString() {
+        return "OrderItemEntity{" +
+                "id=" + id +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                ", totalPrice=" + totalPrice +
+                ", productName='" + productName + '\'' +
+                ", productDesc='" + productDesc + '\'' +
+                ", order=" + order +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

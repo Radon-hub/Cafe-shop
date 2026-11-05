@@ -19,4 +19,6 @@ public interface CartRepository {
     CartEntity createCart(UUID customerId);
 
     void updateCartStatus(UUID cartId, CartStatus cartStatus);
+
+    OperationResult updateCart(UUID cartId);
 }

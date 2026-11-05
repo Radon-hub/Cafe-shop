@@ -45,4 +45,15 @@ public class CartEntity {
         this.customerId = customerId;
     }
 
+    @Override
+    public String toString() {
+        return "CartEntity{" +
+                "id=" + id +
+                ", items=" + items +
+                ", customerId=" + customerId +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

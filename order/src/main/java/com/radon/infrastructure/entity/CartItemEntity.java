@@ -44,4 +44,16 @@ public class CartItemEntity {
         this.productId = productId;
         this.quantity = quantity;
     }
+
+    @Override
+    public String toString() {
+        return "CartItemEntity{" +
+                "id=" + id +
+                ", cart=" + cart +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

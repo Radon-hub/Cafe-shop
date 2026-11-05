@@ -23,6 +23,7 @@ import com.radon.infrastructure.repository.CartJpaRepository;
 import com.radon.infrastructure.repository.OrderItemJpaRepository;
 import com.radon.infrastructure.repository.OrderJpaRepository;
 import com.radon.presentation.dto.SubmitOrderRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Repository
 public class OrderRepositoryImp implements OrderRepository {
 
@@ -63,9 +65,17 @@ public class OrderRepositoryImp implements OrderRepository {
         CartEntity cartEntity = cartJpaRepository.findById(request.cartId()).orElseThrow(CartNotFoundException::new);
 
         switch (cartEntity.getStatus()) {
-            case ACTIVE -> {}
-            case NEED_UPDATE -> throw new CartNeedUpdateException();
-            default -> throw new CartNotAvailableException();
+            case ACTIVE -> {
+                log.info("SubmitOrder -> user:{},cart:{}",user,cartEntity);
+            }
+            case NEED_UPDATE -> {
+                log.error("SubmitOrder -> CartNeedUpdateException -> user:{},cart:{}",user,cartEntity);
+                throw new CartNeedUpdateException();
+            }
+            default -> {
+                log.error("SubmitOrder -> CartNotAvailableException -> user:{},cart:{}",user,cartEntity);
+                throw new CartNotAvailableException();
+            }
         }
 
         List<Long> listOfProductIds = cartEntity.getItems().stream().map(CartItemEntity::getProductId).collect(Collectors.toList());
@@ -84,10 +94,12 @@ public class OrderRepositoryImp implements OrderRepository {
         inventories.forEach(inventory -> {
             if(inventory.count() == 0){
                 updateCartStatusUseCase.updateCartStatus(cartEntity.getId(), CartStatus.NEED_UPDATE);
+                log.error("SubmitOrder -> ProductOutOfStockException -> productId:{} ",inventory.productId());
                 throw new ProductOutOfStockException(inventory.productId().toString());
             }
             if(quantitiesByProductId.get(inventory.productId()) > inventory.count()){
                 updateCartStatusUseCase.updateCartStatus(cartEntity.getId(), CartStatus.NEED_UPDATE);
+                log.error("AddToCart -> ProductNotEnoughAvailableQuantityException -> productId:{} , inventoryCount:{} , cartQuantity:{}",inventory.productId(),inventory.count(),quantitiesByProductId.getOrDefault(inventory.productId(), 0));
                 throw new ProductNotEnoughAvailableQuantityException(inventory.productId().toString());
             }
         });
@@ -110,6 +122,8 @@ public class OrderRepositoryImp implements OrderRepository {
                 request.address()
         ));
 
+        log.info("SubmitOrder -> Order submitted -> order:{} ",savedOrder);
+
         List<OrderItemEntity> listOfOrderItems = productContractsByIds.stream().map(item ->
                 new OrderItemEntity(
                         item.id(),
@@ -128,8 +142,13 @@ public class OrderRepositoryImp implements OrderRepository {
 
         orderItemJpaRepository.saveAll(listOfOrderItems);
 
+        log.info("SubmitOrder -> Order items saved -> order:{} ",listOfOrderItems);
+
         cartEntity.setStatus(CartStatus.CHECKED_OUT);
 
+        log.info("SubmitOrder -> Cart status changed to CHECKED_OUT and locked -> cart:{} ",cartEntity);
+
+        log.info("SubmitOrder -> SUCCESS");
         return OperationResult.SUCCESS;
     }
 
