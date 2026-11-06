@@ -14,4 +14,15 @@ public record ProductContract(
         BigDecimal weight,
         BigDecimal price
 ) {
+    public static ProductContract from(ProductInventoryContract product) {
+        return new ProductContract(
+                product.id(),
+                product.name(),
+                product.description(),
+                product.categoryName(),
+                product.inventory().id(),
+                product.weight(),
+                product.price()
+        );
+    }
 }

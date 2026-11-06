@@ -5,7 +5,6 @@ import com.radon.infrastructure.entity.CartEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,4 +15,6 @@ public interface CartJpaRepository extends JpaRepository<CartEntity, UUID> {
     @Modifying
     @Query("UPDATE CartEntity c SET c.status = :status WHERE c.id = :cartId")
     void updateCartStatus(UUID cartId,CartStatus status);
+
+    Optional<CartEntity> findByCustomerId(UUID customerId);
 }

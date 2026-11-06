@@ -2,7 +2,9 @@ package com.radon.application.service;
 
 import com.radon.application.port.in.*;
 import com.radon.application.port.out.ProductRepository;
+import com.radon.contracts.GetProductsInventoriesContractUseCase;
 import com.radon.contracts.ProductContract;
+import com.radon.contracts.ProductInventoryContract;
 import com.radon.domain.Product;
 import com.radon.presentation.dto.ProductSearchFilterRequest;
 import org.springframework.data.domain.Page;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ProductsService implements AddProductUseCase, GetProductContractsByIdsUseCase,GetProductContractByIdUseCase,GetProductByIdUseCase,GetProductsByCategoryUseCase,UpdateProductUseCase, SearchProductUseCase {
+public class ProductsService implements AddProductUseCase, GetProductsInventoriesContractUseCase, GetProductContractsByIdsUseCase,GetProductContractByIdUseCase,GetProductByIdUseCase,GetProductsByCategoryUseCase,UpdateProductUseCase, SearchProductUseCase {
 
     private final ProductRepository productRepository;
 
@@ -48,5 +50,10 @@ public class ProductsService implements AddProductUseCase, GetProductContractsBy
     @Override
     public List<ProductContract> getProductContractsByIds(List<Long> ids) {
         return productRepository.getProductsByIds(ids).stream().map(Product::toContract).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductInventoryContract> getProductsInventories(List<Long> productIds) {
+        return productRepository.getProductsByIds(productIds).stream().map(Product::toProductInventoryContract).collect(Collectors.toList());
     }
 }

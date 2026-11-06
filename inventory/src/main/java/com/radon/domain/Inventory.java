@@ -26,6 +26,7 @@ public record Inventory(
 
     public static InventoryContract toContract(Inventory inventory) {
         return InventoryContract.builder()
+                .id(inventory.id())
                 .productId(inventory.productId())
                 .count(inventory.count())
                 .wareHouse(inventory.wareHouse.warehouse())

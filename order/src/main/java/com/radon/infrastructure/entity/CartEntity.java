@@ -45,6 +45,17 @@ public class CartEntity {
         this.customerId = customerId;
     }
 
+    public void removeItem(CartItemEntity item) {
+        if (items.remove(item)) {
+            item.setCart(null);
+        }
+    }
+
+    public void addItem(CartItemEntity item) {
+        items.add(item);
+        item.setCart(this);
+    }
+
     @Override
     public String toString() {
         return "CartEntity{" +

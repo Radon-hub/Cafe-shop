@@ -49,7 +49,7 @@ public class CartItemEntity {
     public String toString() {
         return "CartItemEntity{" +
                 "id=" + id +
-                ", cart=" + cart +
+                ", cart_id=" + cart.getId() +
                 ", productId=" + productId +
                 ", quantity=" + quantity +
                 ", createdAt=" + createdAt +

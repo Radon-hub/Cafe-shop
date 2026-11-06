@@ -3,13 +3,9 @@ package com.radon.infrastructure;
 import com.radon.OperationResult;
 import com.radon.application.port.in.GetCurrentUserUseCase;
 import com.radon.application.port.in.GetProductContractByIdUseCase;
-import com.radon.application.port.in.GetProductContractsByIdsUseCase;
 import com.radon.application.port.out.CartRepository;
 import com.radon.contracts.*;
-import com.radon.domain.Cart;
-import com.radon.domain.CartItem;
-import com.radon.domain.CartStatus;
-import com.radon.domain.Product;
+import com.radon.domain.*;
 import com.radon.exception.types.*;
 import com.radon.infrastructure.entity.CartEntity;
 import com.radon.infrastructure.entity.CartItemEntity;
@@ -19,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,19 +25,15 @@ public class CartRepositoryImp implements CartRepository {
     private final CartJpaRepository cartJpaRepository;
     private final CartItemJpaRepository cartItemJpaRepository;
     private final GetCurrentUserUseCase getCurrentUserUseCase;
+    private final GetProductsInventoriesContractUseCase getProductsInventoriesContractUseCase;
     private final GetProductContractByIdUseCase getProductContractByIdUseCase;
-    private final GetProductContractsByIdsUseCase getProductContractsByIdsUseCase;
-    private final GetInventoryContractByProductIdUseCase getInventoryContractByProductIdUseCase;
-    private final GetInventoryContractsByProductIdsUseCase getInventoryContractsByProductIdsUseCase;
 
-    public CartRepositoryImp(CartJpaRepository cartJpaRepository, CartItemJpaRepository cartItemJpaRepository, GetCurrentUserUseCase getCurrentUserUseCase, GetProductContractByIdUseCase getProductContractByIdUseCase, GetProductContractsByIdsUseCase getProductContractsByIdsUseCase, GetInventoryContractByProductIdUseCase getInventoryContractByProductIdUseCase, GetInventoryContractsByProductIdsUseCase getInventoryContractsByProductIdsUseCase) {
+    public CartRepositoryImp(CartJpaRepository cartJpaRepository, CartItemJpaRepository cartItemJpaRepository, GetCurrentUserUseCase getCurrentUserUseCase, GetProductsInventoriesContractUseCase getProductsInventoriesContractUseCase, GetProductContractByIdUseCase getProductContractByIdUseCase) {
         this.cartJpaRepository = cartJpaRepository;
         this.cartItemJpaRepository = cartItemJpaRepository;
         this.getCurrentUserUseCase = getCurrentUserUseCase;
+        this.getProductsInventoriesContractUseCase = getProductsInventoriesContractUseCase;
         this.getProductContractByIdUseCase = getProductContractByIdUseCase;
-        this.getProductContractsByIdsUseCase = getProductContractsByIdsUseCase;
-        this.getInventoryContractByProductIdUseCase = getInventoryContractByProductIdUseCase;
-        this.getInventoryContractsByProductIdsUseCase = getInventoryContractsByProductIdsUseCase;
     }
 
     @Override
@@ -51,9 +42,9 @@ public class CartRepositoryImp implements CartRepository {
 
         UserContract user = getCurrentUserUseCase.getCurrentUser();
 
-        ProductContract productContract = getProductContractByIdUseCase.getProductContractById(product.id());
+        ProductInventoryContract productInventoryContract = getProductsInventoriesContractUseCase.getProductsInventories(List.of(product.id())).getFirst();
 
-        InventoryContract inventory = getInventoryContractByProductIdUseCase.getInventoryContractByProductId(product.id());
+        InventoryContract inventory = productInventoryContract.inventory();
 
         log.info("AddToCart -> productId:{} , userId:{} ",inventory.productId(),user.userName());
 
@@ -67,7 +58,7 @@ public class CartRepositoryImp implements CartRepository {
 
         log.info("AddToCart -> cart:{}",cartEntity.toString());
 
-        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProductIdAndCart_Id(productContract.id(), cartEntity.getId());
+        Optional<CartItemEntity> existingItem = cartItemJpaRepository.findByProductIdAndCart_Id(productInventoryContract.id(), cartEntity.getId());
 
         if (existingItem.isPresent()) {
 
@@ -81,8 +72,8 @@ public class CartRepositoryImp implements CartRepository {
             cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
 
         } else {
-            log.info("AddToCart -> Cart created -> productId:{}",productContract.id());
-            cartItemJpaRepository.save(new CartItemEntity(cartEntity, productContract.id(), 1));
+            log.info("AddToCart -> Cart created -> productId:{}",productInventoryContract.id());
+            cartEntity.addItem(new CartItemEntity(cartEntity, productInventoryContract.id(), 1));
         }
 
         log.info("AddToCart -> SUCCESS");
@@ -104,17 +95,16 @@ public class CartRepositoryImp implements CartRepository {
 
         List<Long> listOfProductIds = cartEntity.getItems().stream().map(CartItemEntity::getProductId).collect(Collectors.toList());
 
-        List<ProductContract> productContractsByIds = getProductContractsByIdsUseCase.getProductContractsByIds(listOfProductIds);
-
         boolean doCartNeedUpdate = cartEntity.getStatus().equals(CartStatus.NEED_UPDATE);
 
-        if(!doCartNeedUpdate){
-            List<InventoryContract> inventories = getInventoryContractsByProductIdsUseCase.getInventoryContractByProductId(listOfProductIds);
+        List<ProductInventoryContract> productsInventory = getProductsInventoriesContractUseCase.getProductsInventories(listOfProductIds);
 
-            Map<Long, Integer> inventoryMap = inventories.stream().collect(
+        if(!doCartNeedUpdate){
+
+            Map<Long, Integer> inventoryMap = productsInventory.stream().collect(
                     Collectors.toMap(
-                            InventoryContract::productId,
-                            InventoryContract::count
+                            ProductInventoryContract::id,
+                            item -> item.inventory().count()
                     )
             );
 
@@ -122,6 +112,8 @@ public class CartRepositoryImp implements CartRepository {
                 Integer availableCount = inventoryMap.get(item.getProductId());
                 return availableCount != null && item.getQuantity() > availableCount;
             });
+
+            log.info("GetCart -> Change cart status to NEED_UPDATE -> cartId:{} , user:{}",cartEntity.getId(),user.userName());
 
             if(doCartNeedUpdate){
                 cartEntity.setStatus(CartStatus.NEED_UPDATE);
@@ -136,13 +128,14 @@ public class CartRepositoryImp implements CartRepository {
                 .needUpdate(doCartNeedUpdate)
                 .items(cartEntity.getItems().stream().map( item -> {
 
-                    ProductContract productContract = productContractsByIds.stream().filter(it -> it.id().equals(item.getProductId())).findFirst().orElse(null);
+                    ProductInventoryContract productContract = productsInventory.stream().filter(it -> it.id().equals(item.getProductId())).findFirst().orElse(null);
 
-                    return CartItem.builder()
-                         .id(item.getId())
-                         .product(productContract)
-                         .quantity(item.getQuantity())
-                         .build();
+                    return productContract != null ?
+                            CartItem.builder()
+                                .id(item.getId())
+                                .product(ProductContract.from(productContract))
+                                .quantity(item.getQuantity())
+                                .build() : CartItem.of(item);
 
                 }).collect(Collectors.toList()))
                 .build();
@@ -180,8 +173,46 @@ public class CartRepositoryImp implements CartRepository {
     }
 
     @Override
+    @Transactional
     public OperationResult updateCart(UUID cartId) {
-        return null;
+
+        UserContract user = getCurrentUserUseCase.getCurrentUser();
+
+        CartEntity cartEntity = cartJpaRepository.findByCustomerIdAndStatusIn(user.id(),List.of(CartStatus.ACTIVE,CartStatus.NEED_UPDATE)).orElseThrow(() -> {
+            log.error("UpdateCart -> CartNotFoundException -> Cart not found -> cartId:{} , userId:{}",cartId,user.id());
+            return new CartNotFoundException();
+        });
+
+        if(!cartEntity.getStatus().equals(CartStatus.NEED_UPDATE)){
+            log.info("UpdateCart -> Cart is already up to date. -> cartId:{} , userId:{}",cartId,user.id());
+            return OperationResult.SUCCESS;
+        }
+
+        List<Long> listOfProductIds = cartEntity.getItems().stream().map(CartItemEntity::getProductId).collect(Collectors.toList());
+
+        List<ProductInventoryContract> productsInventory = getProductsInventoriesContractUseCase.getProductsInventories(listOfProductIds);
+
+        Map<Long, Integer> inventoryMap = productsInventory.stream().collect(
+                Collectors.toMap(ProductInventoryContract::id, item -> item.inventory().count())
+        );
+
+        List<CartItemEntity> cartItems = cartItemJpaRepository.findAllByCart(cartEntity);
+
+        log.info("UpdateCart -> update cart items with inventory");
+
+        cartItems.forEach(item -> {
+            Integer count = inventoryMap.get(item.getProductId());
+
+            if (count == null || count <= 0) {
+                cartEntity.removeItem(item);
+            } else if (count < item.getQuantity()) {
+                item.setQuantity(count);
+            }
+        });
+
+        cartEntity.setStatus(CartStatus.ACTIVE);
+        log.info("UpdateCart -> SUCCESS -> Cart status changed to ACTIVE -> cartId:{} , userId:{}",cartId,user.userName());
+        return OperationResult.SUCCESS;
     }
 
     @Override
