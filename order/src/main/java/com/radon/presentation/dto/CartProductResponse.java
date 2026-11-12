@@ -1,6 +1,6 @@
 package com.radon.presentation.dto;
 
-import com.radon.contracts.ProductContract;
+import com.radon.contracts.dto.ProductContract;
 import lombok.Builder;
 
 import java.math.BigDecimal;

@@ -1,6 +1,6 @@
 package com.radon.domain;
 
-import com.radon.contracts.ProductContract;
+import com.radon.contracts.dto.ProductContract;
 import com.radon.infrastructure.entity.CartItemEntity;
 import lombok.Builder;
 

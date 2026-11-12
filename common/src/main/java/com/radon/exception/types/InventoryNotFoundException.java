@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class InventoryNotFoundException extends ExceptionModel {
+    public InventoryNotFoundException() {
+        super("Inventory not found!");
+    }
     public InventoryNotFoundException(Long productId) {
         super("Inventory not found for product id " + productId);
     }

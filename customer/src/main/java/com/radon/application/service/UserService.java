@@ -5,7 +5,7 @@ import com.radon.application.port.in.LoginUserUseCase;
 import com.radon.application.port.in.RefreshTokenUseCase;
 import com.radon.application.port.in.RegisterUserUseCase;
 import com.radon.application.port.out.UserRepository;
-import com.radon.contracts.UserContract;
+import com.radon.contracts.dto.UserContract;
 import com.radon.domain.JwtTokens;
 import com.radon.domain.User;
 import com.radon.exception.types.UnAuthorizedException;

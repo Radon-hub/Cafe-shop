@@ -4,10 +4,10 @@ import com.radon.OperationResult;
 import com.radon.application.port.in.GetCurrentUserUseCase;
 import com.radon.application.port.in.UpdateCartStatusUseCase;
 import com.radon.application.port.out.OrderRepository;
-import com.radon.contracts.GetProductsInventoriesContractUseCase;
-import com.radon.contracts.InventoryContract;
-import com.radon.contracts.ProductInventoryContract;
-import com.radon.contracts.UserContract;
+import com.radon.contracts.dto.*;
+import com.radon.contracts.usecase.GetProductsInventoriesContractUseCase;
+import com.radon.contracts.usecase.ReserveProductsForOrderContractUseCase;
+import com.radon.contracts.usecase.UpdateInventoryReserveContractUseCase;
 import com.radon.domain.CartStatus;
 import com.radon.domain.OrderNumberGenerator;
 import com.radon.domain.OrderStatus;
@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,17 +37,29 @@ public class OrderRepositoryImp implements OrderRepository {
     private final OrderJpaRepository orderJpaRepository;
     private final OrderItemJpaRepository orderItemJpaRepository;
     private final CartJpaRepository cartJpaRepository;
+
     private final UpdateCartStatusUseCase updateCartStatusUseCase;
     private final GetCurrentUserUseCase getCurrentUserUseCase;
     private final GetProductsInventoriesContractUseCase getProductsInventoriesContractUseCase;
+    private final ReserveProductsForOrderContractUseCase reserveProductsForOrderContractUseCase;
+    private final UpdateInventoryReserveContractUseCase updateInventoryReserveContractUseCase;
 
-    public OrderRepositoryImp(OrderJpaRepository orderJpaRepository, OrderItemJpaRepository orderItemJpaRepository, CartJpaRepository cartJpaRepository, UpdateCartStatusUseCase updateCartStatusUseCase, GetCurrentUserUseCase getCurrentUserUseCase, GetProductsInventoriesContractUseCase getProductsInventoriesContractUseCase) {
+    public OrderRepositoryImp(OrderJpaRepository orderJpaRepository, OrderItemJpaRepository orderItemJpaRepository, CartJpaRepository cartJpaRepository, UpdateCartStatusUseCase updateCartStatusUseCase, GetCurrentUserUseCase getCurrentUserUseCase, GetProductsInventoriesContractUseCase getProductsInventoriesContractUseCase, ReserveProductsForOrderContractUseCase reserveProductsForOrderContractUseCase, UpdateInventoryReserveContractUseCase updateInventoryReserveContractUseCase) {
         this.orderJpaRepository = orderJpaRepository;
         this.orderItemJpaRepository = orderItemJpaRepository;
         this.cartJpaRepository = cartJpaRepository;
         this.updateCartStatusUseCase = updateCartStatusUseCase;
         this.getCurrentUserUseCase = getCurrentUserUseCase;
         this.getProductsInventoriesContractUseCase = getProductsInventoriesContractUseCase;
+        this.reserveProductsForOrderContractUseCase = reserveProductsForOrderContractUseCase;
+        this.updateInventoryReserveContractUseCase = updateInventoryReserveContractUseCase;
+    }
+
+    @Override
+    @Transactional
+    public OperationResult expirePendingOrders(List<UUID> orderIds) {
+        orderJpaRepository.expireByOrderIds(orderIds);
+        return OperationResult.SUCCESS;
     }
 
     @Override
@@ -139,9 +152,37 @@ public class OrderRepositoryImp implements OrderRepository {
 
         log.info("SubmitOrder -> Order items saved -> order:{} ", listOfOrderItems);
 
+        log.info("SubmitOrder -> Redirect for Reservation ===> ReserveProducts");
+
+        Map<UUID, Map<Long, Integer>> ordersWithProduct = new HashMap<>();
+
+        Map<Long, Integer> collectOrderProducts = listOfOrderItems.stream().collect(Collectors.toMap(
+                OrderItemEntity::getProductId,
+                OrderItemEntity::getQuantity
+        ));
+
+        ordersWithProduct.put(savedOrder.getId(), collectOrderProducts);
+
+        List<ReservedContract> reservedContracts = reserveProductsForOrderContractUseCase.reserveProductForOrder(ordersWithProduct);
+
+        log.info("SubmitOrder <=== Receive the reservations -> reserved products:{} ", reservedContracts);
+
+        Map<Long, Integer> inventoriesWithReservedCounts = new HashMap<>();
+
+        for (ReservedContract reservedContract : reservedContracts) {
+            inventories.stream().filter(item -> item.productId().equals(reservedContract.productId())).findFirst()
+                    .ifPresent(inventoryContract -> inventoriesWithReservedCounts.put(inventoryContract.id(), reservedContract.count()));
+        }
+
+        log.info("SubmitOrder -> Get inventories that need update on reserved counts -> inventories:{} ", inventoriesWithReservedCounts);
+
+        updateInventoryReserveContractUseCase.updateInventoryReserveContractUseCase(inventoriesWithReservedCounts, ReservationOperator.INCREASE);
+
         cartEntity.setStatus(CartStatus.CHECKED_OUT);
 
-        log.info("SubmitOrder -> Cart status changed to CHECKED_OUT and locked -> cart:{} ", cartEntity);
+        savedOrder.setOrderStatus(OrderStatus.PENDING_PAYMENT);
+
+        log.info("SubmitOrder -> Cart status changed to CHECKED_OUT / Order status changed to PENDING_PAYMENT / ORDER - CART = LOCKED -> cart:{} ", cartEntity);
 
         log.info("SubmitOrder -> SUCCESS");
 

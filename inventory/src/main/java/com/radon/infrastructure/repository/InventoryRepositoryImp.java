@@ -3,6 +3,7 @@ package com.radon.infrastructure.repository;
 import com.radon.OperationResult;
 import com.radon.application.port.out.InventoryRepository;
 import com.radon.application.port.out.WarehouseRepository;
+import com.radon.contracts.dto.ReservationOperator;
 import com.radon.domain.Inventory;
 import com.radon.exception.types.InventoryExistsException;
 import com.radon.exception.types.InventoryNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -63,7 +65,27 @@ public class InventoryRepositoryImp implements InventoryRepository {
                 () -> new InventoryNotFoundException(inventory.id(), inventory.productId())
         );
 
-        inventoryEntity.setCount(inventory.count());
+        inventoryEntity.setPhysicalQuantity(inventory.count());
+
+        return OperationResult.SUCCESS;
+    }
+
+    @Override
+    @Transactional
+    public OperationResult updateInventoryReserveCount(Map<Long,Integer> inventoriesAndReservedCounts, ReservationOperator operator) {
+
+        List<InventoryEntity> inventories = inventoryJpaRepository.findAllById(inventoriesAndReservedCounts.keySet());
+
+        inventories.forEach(inventoryEntity -> {
+            int finalReservedCount = inventoryEntity.getReservedQuantity();
+
+            switch (operator) {
+                case INCREASE ->  finalReservedCount += inventoriesAndReservedCounts.get(inventoryEntity.getId());
+                case DECREASE ->  finalReservedCount -= inventoriesAndReservedCounts.get(inventoryEntity.getId());
+            }
+
+            inventoryEntity.setReservedQuantity(finalReservedCount);
+        });
 
         return OperationResult.SUCCESS;
     }

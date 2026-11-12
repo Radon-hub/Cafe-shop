@@ -2,9 +2,9 @@ package com.radon.application.service;
 
 import com.radon.application.port.in.*;
 import com.radon.application.port.out.ProductRepository;
-import com.radon.contracts.GetProductsInventoriesContractUseCase;
-import com.radon.contracts.ProductContract;
-import com.radon.contracts.ProductInventoryContract;
+import com.radon.contracts.usecase.GetProductsInventoriesContractUseCase;
+import com.radon.contracts.dto.ProductContract;
+import com.radon.contracts.dto.ProductInventoryContract;
 import com.radon.domain.Product;
 import com.radon.presentation.dto.ProductSearchFilterRequest;
 import org.springframework.data.domain.Page;

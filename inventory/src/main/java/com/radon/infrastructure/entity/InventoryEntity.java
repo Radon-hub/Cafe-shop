@@ -25,8 +25,12 @@ public class InventoryEntity {
             allocationSize = 1
     )
     private Long id;
-    @Column(nullable = false)
-    private int count;
+
+    @Column(name = "physical_quantity", nullable = false)
+    private int physicalQuantity;
+
+    @Column(name = "reserved_quantity", nullable = false)
+    private int reservedQuantity;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id", nullable = false,unique = true)
@@ -46,10 +50,20 @@ public class InventoryEntity {
 
     public InventoryEntity() {}
 
-    public InventoryEntity(ProductEntity product,int count,WarehouseEntity wareHouse) {
+    public InventoryEntity(
+            ProductEntity product,
+            int physicalQuantity,
+            WarehouseEntity warehouse
+    ) {
         this.product = product;
-        this.count = count;
-        this.wareHouse = wareHouse;
+        this.physicalQuantity = physicalQuantity;
+        this.reservedQuantity = 0;
+        this.wareHouse = warehouse;
+    }
+
+    @Transient
+    public int getCount() {
+        return physicalQuantity - reservedQuantity;
     }
 
     public static InventoryEntity of(ProductEntity productEntity, Inventory inventory, Warehouse warehouse) {

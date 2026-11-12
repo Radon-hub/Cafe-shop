@@ -1,7 +1,7 @@
 package com.radon.domain;
 
-import com.radon.contracts.ProductContract;
-import com.radon.contracts.ProductInventoryContract;
+import com.radon.contracts.dto.ProductContract;
+import com.radon.contracts.dto.ProductInventoryContract;
 import com.radon.infrastructure.entity.ProductEntity;
 import com.radon.presentation.dto.ProductAddRequest;
 import com.radon.presentation.dto.ProductUpdateRequest;

@@ -15,7 +15,8 @@ class InventoryResponseTest {
     Inventory inventory = Inventory.builder()
             .id(1L)
             .wareHouse(Warehouse.builder().id(1L).build())
-            .count(5)
+            .physicalQuantity(5)
+            .physicalQuantity(1)
             .productId(1L)
             .build();
 

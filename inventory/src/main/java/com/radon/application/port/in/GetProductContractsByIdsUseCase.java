@@ -1,6 +1,6 @@
 package com.radon.application.port.in;
 
-import com.radon.contracts.ProductContract;
+import com.radon.contracts.dto.ProductContract;
 import java.util.List;
 
 public interface GetProductContractsByIdsUseCase {

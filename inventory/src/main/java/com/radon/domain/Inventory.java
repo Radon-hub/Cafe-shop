@@ -1,6 +1,6 @@
 package com.radon.domain;
 
-import com.radon.contracts.InventoryContract;
+import com.radon.contracts.dto.InventoryContract;
 import com.radon.infrastructure.entity.InventoryEntity;
 import lombok.Builder;
 

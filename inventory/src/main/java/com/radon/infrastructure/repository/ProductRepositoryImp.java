@@ -148,7 +148,7 @@ public class ProductRepositoryImp implements ProductRepository {
 
         Specification<ProductEntity> specification = ProductSpecifications.productSearchFilter(filter);
 
-        val pagedContent = productJpaRepository.findAll(specification, pageable).map(item ->
+        return productJpaRepository.findAll(specification, pageable).map(item ->
                 Product.builder()
                         .id(item.getId())
                         .name(item.getName())
@@ -167,8 +167,6 @@ public class ProductRepositoryImp implements ProductRepository {
                         )
                         .build()
         );
-
-        return pagedContent;
     }
 
 
